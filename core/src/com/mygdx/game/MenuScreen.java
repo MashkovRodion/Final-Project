@@ -16,9 +16,10 @@ public class MenuScreen implements Screen, InputProcessor {
     private Texture background;
     private BitmapFont font;
 
-    private Rectangle newGameArea;
-    private Rectangle optionsArea;
-    private Rectangle quitArea;
+
+    private Button buttonStart;
+    private Button buttonOptions;
+    private Button buttonQuit;
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
@@ -28,30 +29,26 @@ public class MenuScreen implements Screen, InputProcessor {
     public void show() {
         batch = new SpriteBatch();
         background = new Texture("menu_bg.png");
+        buttonStart = new Button(
+                new Texture("NEW_GAME.png"),
+                300, 400,
+                300, 80
+        );
+        buttonOptions = new Button(
+                new Texture("OPTIONS.png"),
+                300, 400,
+                300, 80
+        );
+        buttonQuit = new Button(
+                new Texture("QUIT_GAME.png"),
+                300, 400,
+                300, 80
+        );
         font = new BitmapFont();
 
-        float screenWidth = Gdx.graphics.getWidth();
-        float screenHeight = Gdx.graphics.getHeight();
-
-        newGameArea = new Rectangle(
-                screenWidth * 0.50f,   // x: 35% от ширины экрана
-                screenHeight * 0.6f,   // y: 60% от высоты
-                screenWidth * 0.70f,    // ширина: 30% экрана
-                screenHeight * 0.08f   // высота: 8% экрана
-        );
-
-        optionsArea = new Rectangle(
-                screenWidth * 0.35f,
-                screenHeight * 0.45f,
-                screenWidth * 0.3f,
-                screenHeight * 0.08f
-        );
-
-        quitArea = new Rectangle(
-                screenWidth * 0.35f,
-                screenHeight * 0.3f,
-                screenWidth * 0.3f,
-                screenHeight * 0.08f
+        resize(
+                Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight()
         );
 
         Gdx.input.setInputProcessor(this);
@@ -63,7 +60,15 @@ public class MenuScreen implements Screen, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        batch.draw(background, 0, 0,
+                Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight());
+
+        buttonStart.draw(batch);
+        buttonOptions.draw(batch);
+        buttonQuit.draw(batch);
+
         batch.end();
     }
 
@@ -71,19 +76,19 @@ public class MenuScreen implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         float y = Gdx.graphics.getHeight() - screenY;
 
-        if (newGameArea.contains(screenX, y)) {
-            System.out.println("NEW GAME pressed");
+        if (buttonStart.isTapped(screenX, y)) {
+            System.out.println("NEW GAME");
             game.setScreen(new WhiteScreen(game));
             return true;
         }
 
-        if (optionsArea.contains(screenX, y)) {
-            System.out.println("OPTIONS pressed");
+        if (buttonOptions.isTapped(screenX, y)) {
+            System.out.println("OPTIONS");
             return true;
         }
 
-        if (quitArea.contains(screenX, y)) {
-            System.out.println("QUIT pressed");
+        if (buttonQuit.isTapped(screenX, y)) {
+            System.out.println("QUIT");
             Gdx.app.exit();
             return true;
         }
@@ -107,9 +112,27 @@ public class MenuScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        newGameArea.set(width * 0.35f, height * 0.6f, width * 0.3f, height * 0.08f);
-        optionsArea.set(width * 0.35f, height * 0.45f, width * 0.3f, height * 0.08f);
-        quitArea.set(width * 0.35f, height * 0.3f, width * 0.3f, height * 0.08f);
+
+        buttonStart.setPosition(
+                width * 0.15f,
+                height * 0.41f,
+                width * 0.7f,
+                height * 0.5f
+        );
+
+        buttonOptions.setPosition(
+                width * 0.15f,
+                height * 0.21f,
+                width * 0.7f,
+                height * 0.5f
+        );
+
+        buttonQuit.setPosition(
+                width * 0.15f,
+                height * 0.01f,
+                width * 0.7f,
+                height * 0.5f
+        );
     }
 
     @Override
@@ -122,6 +145,9 @@ public class MenuScreen implements Screen, InputProcessor {
     public void dispose() {
         batch.dispose();
         background.dispose();
+        buttonStart.dispose();
+        buttonOptions.dispose();
+        buttonQuit.dispose();
         font.dispose();
     }
 }
