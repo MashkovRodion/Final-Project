@@ -29,20 +29,33 @@ public class MenuScreen implements Screen, InputProcessor {
     public void show() {
         batch = new SpriteBatch();
         background = new Texture("menu_bg.png");
+        float buttonWidth = 400;
+        float buttonHeight = 250;
+
+        float centerX = (Gdx.graphics.getWidth() - buttonWidth) / 2f;
+
         buttonStart = new Button(
                 new Texture("NEW_GAME.png"),
-                300, 400,
-                300, 80
+                centerX,
+                225,
+                buttonWidth,
+                buttonHeight
         );
+
         buttonOptions = new Button(
                 new Texture("OPTIONS.png"),
-                300, 400,
-                300, 80
+                centerX,
+                75,
+                buttonWidth,
+                buttonHeight
         );
+
         buttonQuit = new Button(
                 new Texture("QUIT_GAME.png"),
-                300, 400,
-                300, 80
+                centerX,
+                -75,
+                buttonWidth,
+                buttonHeight
         );
         font = new BitmapFont();
 
@@ -58,6 +71,13 @@ public class MenuScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        float mouseX = Gdx.input.getX();
+        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+        buttonStart.update(mouseX, mouseY);
+        buttonOptions.update(mouseX, mouseY);
+        buttonQuit.update(mouseX, mouseY);
 
         batch.begin();
 
@@ -113,26 +133,6 @@ public class MenuScreen implements Screen, InputProcessor {
     @Override
     public void resize(int width, int height) {
 
-        buttonStart.setPosition(
-                width * 0.15f,
-                height * 0.41f,
-                width * 0.7f,
-                height * 0.5f
-        );
-
-        buttonOptions.setPosition(
-                width * 0.15f,
-                height * 0.21f,
-                width * 0.7f,
-                height * 0.5f
-        );
-
-        buttonQuit.setPosition(
-                width * 0.15f,
-                height * 0.01f,
-                width * 0.7f,
-                height * 0.5f
-        );
     }
 
     @Override
