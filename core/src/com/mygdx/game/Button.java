@@ -67,8 +67,4 @@ public class Button {
 
         scale += (targetScale - scale) * 0.2f;
     }
-
-
-
-
 }

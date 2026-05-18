@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 
 public class MenuScreen implements Screen, InputProcessor {
 
@@ -98,7 +97,8 @@ public class MenuScreen implements Screen, InputProcessor {
 
         if (buttonStart.isTapped(screenX, y)) {
             System.out.println("NEW GAME");
-            game.setScreen(new WhiteScreen(game));
+            game.setScreen(game.gameScreen);
+            //game.setScreen(new WhiteScreen(game));
             return true;
         }
 
