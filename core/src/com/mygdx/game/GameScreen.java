@@ -15,6 +15,7 @@ public class GameScreen extends ScreenAdapter {
 
     Texture currentGasTexture;
     Texture currentBrakeTexture;
+    Texture ramSpeed;
 
     Rectangle gasButtonRect;
     Rectangle brakeButtonRect;
@@ -35,6 +36,7 @@ public class GameScreen extends ScreenAdapter {
         font = new BitmapFont();
         font.getData().setScale(1.5f);
         touchPos = new Vector3();
+        ramSpeed = GameResources.ramSpeed;
 
         currentGasTexture = GameResources.gasNormal;
         currentBrakeTexture = GameResources.brakeNormal;
@@ -47,8 +49,8 @@ public class GameScreen extends ScreenAdapter {
         isGasPressed = false;
         isBrakePressed = false;
 
-        gasButtonRect = new Rectangle(GameSettings.GAS_X, GameSettings.BUTTON_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
-        brakeButtonRect = new Rectangle(GameSettings.BRAKE_X, GameSettings.BUTTON_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
+        gasButtonRect = new Rectangle(GameSettings.GAS_X, GameSettings.GAZ_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
+        brakeButtonRect = new Rectangle(GameSettings.BRAKE_X, GameSettings.BRAKE_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
     }
 
     @Override
@@ -97,16 +99,18 @@ public class GameScreen extends ScreenAdapter {
     }
 
     void draw() {
+        //Gdx.gl.glClearColor( 0, 0, 0, 0);=
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         myGdxGame.viewport.apply();
         myGdxGame.batch.setProjectionMatrix(myGdxGame.camera.combined);
         myGdxGame.batch.begin();
+        myGdxGame.batch.draw(ramSpeed, GameSettings.RAM_SPEED_X, GameSettings.RAM_SPEED_Y, gasButtonRect.width, gasButtonRect.height);
 
         myGdxGame.batch.draw(currentGasTexture, gasButtonRect.x, gasButtonRect.y, gasButtonRect.width, gasButtonRect.height);
         myGdxGame.batch.draw(currentBrakeTexture, brakeButtonRect.x, brakeButtonRect.y, brakeButtonRect.width, brakeButtonRect.height);
-        font.draw(myGdxGame.batch, "Speed: " + (int)currentSpeed, GameSettings.SPEED_TEXT_X, GameSettings.SPEED_TEXT_Y);
+        font.draw(myGdxGame.batch, " " + (int)currentSpeed, GameSettings.SPEED_TEXT_X, GameSettings.SPEED_TEXT_Y);
 
         myGdxGame.batch.end();
     }
