@@ -17,6 +17,9 @@ public class GameScreen extends ScreenAdapter {
     Texture currentBrakeTexture;
     Texture ramSpeed;
 
+    Texture star_tusk;
+    Texture star;
+
     Rectangle gasButtonRect;
     Rectangle brakeButtonRect;
 
@@ -30,6 +33,9 @@ public class GameScreen extends ScreenAdapter {
     boolean isBrakePressed;
 
     Vector3 touchPos;
+    long startTime;
+
+
 
     public GameScreen(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
@@ -45,9 +51,16 @@ public class GameScreen extends ScreenAdapter {
         acceleration = GameSettings.ACCELERATION;
         brakeForce = GameSettings.BRAKE_FORCE;
         friction = GameSettings.FRICTION;
+
+        star = GameResources.star;
+        star_tusk = GameResources.star_tusk;
+
         currentSpeed = 0;
         isGasPressed = false;
         isBrakePressed = false;
+
+        //startTime = com.badlogic.gdx.utils.TimeUtils.millis();
+
 
         gasButtonRect = new Rectangle(GameSettings.GAS_X, GameSettings.GAZ_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
         brakeButtonRect = new Rectangle(GameSettings.BRAKE_X, GameSettings.BRAKE_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
@@ -58,6 +71,11 @@ public class GameScreen extends ScreenAdapter {
         handleInput();
         updateSpeed(delta);
         draw();
+    }
+
+    @Override
+    public void show() {
+        startTime = com.badlogic.gdx.utils.TimeUtils.millis();
     }
 
     void handleInput() {
@@ -111,6 +129,19 @@ public class GameScreen extends ScreenAdapter {
         myGdxGame.batch.draw(currentGasTexture, gasButtonRect.x, gasButtonRect.y, gasButtonRect.width, gasButtonRect.height);
         myGdxGame.batch.draw(currentBrakeTexture, brakeButtonRect.x, brakeButtonRect.y, brakeButtonRect.width, brakeButtonRect.height);
         font.draw(myGdxGame.batch, " " + (int)currentSpeed, GameSettings.SPEED_TEXT_X, GameSettings.SPEED_TEXT_Y);
+        long totalSeconds = com.badlogic.gdx.utils.TimeUtils.timeSinceMillis(startTime) / 1000;
+
+        long mins = totalSeconds / 60;
+        long secs = totalSeconds % 60;
+
+        String strMins = (mins < 10) ? "0" + mins : "" + mins;
+        String strSecs = (secs < 10) ? "0" + secs : "" + secs;
+
+        font.draw(myGdxGame.batch, strMins + ":" + strSecs, 300, 460);
+
+        myGdxGame.batch.draw((totalSeconds >= 60) ? star_tusk : star, 0, 430, 40, 40); // Левая
+        myGdxGame.batch.draw((totalSeconds >= 40) ? star_tusk : star, 50, 430, 40, 40); // Средняя
+        myGdxGame.batch.draw((totalSeconds >= 20) ? star_tusk : star, 100,  430, 40, 40); // Правая
 
         myGdxGame.batch.end();
     }

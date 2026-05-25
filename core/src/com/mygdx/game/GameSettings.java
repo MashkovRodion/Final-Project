@@ -12,7 +12,7 @@ public class GameSettings {
     public static final int SCREEN_HEIGHT = 480;
 
 
-    public static final int BUTTON_SIZE = 100;      // Размер кнопки
+    public static final int BUTTON_SIZE = 100;   // Размер кнопки
     public static final int GAS_X = 710;            // X для газа
     public static final int BRAKE_X = 710;          // X для тормоза
     public static final int GAZ_Y = 110;            // Y от низа

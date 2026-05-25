@@ -10,13 +10,18 @@ public class GameResources {
     public static Texture brakeNormal;
     public static Texture brakePressed;
     public static Texture ramSpeed;
+    public static Texture star;
+    public static Texture star_tusk;
+
 
     public void loadTextures() {
-        gasNormal = new Texture("gas and brake/brake_normal.png");
+        gasNormal = new Texture("gas and brake/gas_normal.png");
         gasPressed = new Texture("gas and brake/gas_pressed.png");
         brakeNormal = new Texture("gas and brake/brake_normal.png");
         brakePressed = new Texture("gas and brake/brake_pressed.png");
         ramSpeed = new Texture("ram.speed.png");
+        star = new Texture("stars/star.png");
+        star_tusk = new Texture("stars/star_tusk.png");
     }
 
 
