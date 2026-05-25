@@ -193,6 +193,10 @@ public class MenuScreen implements Screen, InputProcessor {
                     new WhiteScreen(game)
             );
 
+        if (buttonStart.isTapped(screenX, y)) {
+            System.out.println("NEW GAME");
+            game.setScreen(game.gameScreen);
+            //game.setScreen(new WhiteScreen(game));
             return true;
         }
 
