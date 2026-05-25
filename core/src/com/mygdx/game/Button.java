@@ -48,6 +48,7 @@ public class Button {
 
 
     public void dispose() {
+
         texture.dispose();
     }
 
@@ -66,5 +67,8 @@ public class Button {
         targetScale = hovered ? 1.1f : 1f;
 
         scale += (targetScale - scale) * 0.2f;
+    }
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }
