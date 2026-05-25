@@ -167,7 +167,7 @@ public class OptionScreen implements Screen, InputProcessor {
         font.draw(
                 batch,
                 "" + (int)(Options.musicVolume * 100),
-                panelX + panelWidth * 0.615f,
+                panelX + panelWidth * 0.62f,
                 panelY + panelHeight * 0.6f
         );
 
