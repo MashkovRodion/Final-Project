@@ -65,7 +65,5 @@ public class Button {
         this.texture = texture;
     }
 
-    public void dispose() {
-        texture.dispose();
-    }
+    public Texture getTexture() {return this.texture;}
 }

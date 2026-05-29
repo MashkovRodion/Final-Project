@@ -15,7 +15,24 @@ public class GameResources {
     public static Texture star;
     public static Texture star_tusk;
 
-    public void loadTextures() {
+
+    public static Texture menu_bg;
+
+    public static Texture startButton;
+    public static Texture optionsButton;
+    public static Texture quitButton;
+
+    public static Texture backButton;
+
+    public static Texture plusButton;
+    public static Texture minusButton;
+
+    public static Texture fullscreenOn;
+    public static Texture fullscreenOff;
+
+    public static Texture musicPanel;
+
+    public static void loadTextures() {
 
         gasNormal = new Texture("gas and brake/gas_normal.png");
         gasPressed = new Texture("gas and brake/gas_pressed.png");
@@ -27,6 +44,27 @@ public class GameResources {
 
         star = new Texture("stars/star.png");
         star_tusk = new Texture("stars/star_tusk.png");
+
+
+        menu_bg = new Texture("menu_bg.png");
+
+        startButton = new Texture("NEW_GAME.png");
+
+        optionsButton = new Texture("OPTIONS.png");
+
+        quitButton = new Texture("QUIT_GAME.png");
+
+        backButton = new Texture("BACK.png");
+
+        plusButton = new Texture("PLUS.png");
+
+        minusButton = new Texture("MINUS.png");
+
+        fullscreenOn = new Texture("FULLSCREEN_ON.png");
+
+        fullscreenOff = new Texture("FULLSCREEN_OFF.png");
+
+        musicPanel = new Texture("music.png");
     }
 
     public static void dispose() {
@@ -39,5 +77,21 @@ public class GameResources {
         if (ramSpeed != null) ramSpeed.dispose();
         if (star != null) star.dispose();
         if (star_tusk != null) star_tusk.dispose();
+
+        if (menu_bg != null) menu_bg.dispose();
+
+        if (startButton != null) startButton.dispose();
+        if (optionsButton != null) optionsButton.dispose();
+        if (quitButton != null) quitButton.dispose();
+
+        if (backButton != null) backButton.dispose();
+
+        if (plusButton != null) plusButton.dispose();
+        if (minusButton != null) minusButton.dispose();
+
+        if (fullscreenOn != null) fullscreenOn.dispose();
+        if (fullscreenOff != null) fullscreenOff.dispose();
+
+        if (musicPanel != null) musicPanel.dispose();
     }
 }

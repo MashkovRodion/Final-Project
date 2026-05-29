@@ -16,11 +16,13 @@ public class MyGdxGame extends Game {
 	public Viewport uiViewport;
 
 	public GameScreen gameScreen;
+	public MenuScreen menuScreen;
+	public OptionScreen optionScreen;
 
 	@Override
 	public void create() {
 
-		
+
 
 		batch = new SpriteBatch();
 		gameCamera = new OrthographicCamera();
@@ -37,12 +39,13 @@ public class MyGdxGame extends Game {
 		gameViewport.apply(true);
 		uiViewport.apply(true);
 
-		GameResources resources = new GameResources();
-		resources.loadTextures();
+		GameResources.loadTextures();
 
 		gameScreen = new GameScreen(this);
+		menuScreen = new MenuScreen(this);
+		optionScreen = new OptionScreen(this);
 
-		setScreen(new MenuScreen(this));
+		setScreen(menuScreen);
 	}
 
 	@Override

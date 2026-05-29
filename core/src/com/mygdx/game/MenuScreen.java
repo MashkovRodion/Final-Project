@@ -4,8 +4,6 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MenuScreen implements Screen, InputProcessor {
 
@@ -25,11 +23,13 @@ public class MenuScreen implements Screen, InputProcessor {
     @Override
     public void show() {
 
-        background = new Texture("menu_bg.png");
+        background = GameResources.menu_bg;
 
-        buttonStart = new Button(new Texture("NEW_GAME.png"), 0,0,0,0);
-        buttonOptions = new Button(new Texture("OPTIONS.png"), 0,0,0,0);
-        buttonQuit = new Button(new Texture("QUIT_GAME.png"), 0,0,0,0);
+        buttonStart = new Button(GameResources.startButton,0,0,0,0);
+
+        buttonOptions = new Button(GameResources.optionsButton,0,0,0,0);
+
+        buttonQuit = new Button(GameResources.quitButton,0,0,0,0);
 
         updateButtons();
 
@@ -38,8 +38,8 @@ public class MenuScreen implements Screen, InputProcessor {
 
     private void updateButtons() {
 
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        float w = game.uiViewport.getWorldWidth();
+        float h = game.uiViewport.getWorldHeight();
 
         float bw = w * 0.45f;
         float bh = h * 0.4f;
@@ -72,8 +72,8 @@ public class MenuScreen implements Screen, InputProcessor {
 
         game.batch.draw(background,
                 0,0,
-                Gdx.graphics.getWidth(),
-                Gdx.graphics.getHeight());
+                game.uiViewport.getWorldWidth(),
+                game.uiViewport.getWorldHeight());
 
         buttonStart.draw(game.batch);
         buttonOptions.draw(game.batch);
@@ -94,7 +94,7 @@ public class MenuScreen implements Screen, InputProcessor {
         }
 
         if (buttonOptions.isTapped(t.x,t.y)) {
-            game.setScreen(new OptionScreen(game));
+            game.setScreen(game.optionScreen);
             return true;
         }
 
@@ -119,10 +119,7 @@ public class MenuScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-        background.dispose();
-        buttonStart.dispose();
-        buttonOptions.dispose();
-        buttonQuit.dispose();
+
     }
 
     @Override public boolean keyDown(int k){return false;}
