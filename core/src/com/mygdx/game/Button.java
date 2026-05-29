@@ -9,7 +9,6 @@ public class Button {
     private Texture texture;
 
     private Rectangle drawBounds;
-
     private Rectangle hitbox;
 
     private float scale = 1f;
@@ -29,8 +28,7 @@ public class Button {
         );
     }
 
-    public void setPosition(float x, float y,
-                            float width, float height) {
+    public void setPosition(float x, float y, float width, float height) {
 
         drawBounds.set(x, y, width, height);
 
@@ -42,33 +40,32 @@ public class Button {
         );
     }
 
-    public boolean isTapped(float screenX, float screenY) {
-        return hitbox.contains(screenX, screenY);
+    public boolean isTapped(float x, float y) {
+        return hitbox.contains(x, y);
     }
 
-
-    public void dispose() {
-
-        texture.dispose();
-    }
-
-
-    public void draw(SpriteBatch batch) {
-        float w = drawBounds.width * scale;
-        float h = drawBounds.height * scale;
-
-        float x = drawBounds.x - (w - drawBounds.width) / 2;
-        float y = drawBounds.y - (h - drawBounds.height) / 2;
-
-        batch.draw(texture, x, y, w, h);
-    }
     public void update(float mouseX, float mouseY) {
         boolean hovered = hitbox.contains(mouseX, mouseY);
         targetScale = hovered ? 1.1f : 1f;
-
         scale += (targetScale - scale) * 0.2f;
     }
+
+    public void draw(SpriteBatch batch) {
+
+        float w = drawBounds.width * scale;
+        float h = drawBounds.height * scale;
+
+        float x = drawBounds.x - (w - drawBounds.width) / 2f;
+        float y = drawBounds.y - (h - drawBounds.height) / 2f;
+
+        batch.draw(texture, x, y, w, h);
+    }
+
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public void dispose() {
+        texture.dispose();
     }
 }
