@@ -4,34 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class OptionScreen implements Screen, InputProcessor {
 
     private MyGdxGame game;
-
-    private SpriteBatch batch;
     private BitmapFont font;
-
-    private Texture background;
-    private Texture volumePanel;
 
     private Button fullscreenButton;
     private Button buttonMusicPlus;
     private Button buttonMusicMinus;
     private Button buttonBack;
-
-    private Texture fullscreenOn;
-    private Texture fullscreenOff;
-
-    private OrthographicCamera camera;
-    private Viewport viewport;
 
     private int oldWindowWidth = 1280;
     private int oldWindowHeight = 720;
@@ -47,42 +31,19 @@ public class OptionScreen implements Screen, InputProcessor {
     public OptionScreen(MyGdxGame game) {
 
         this.game = game;
+        font = new BitmapFont();
+
+        fullscreenButton = new Button(GameResources.fullscreenOff, 0,0,0,0);
+
+        buttonMusicPlus = new Button(GameResources.plusButton,0,0,0,0);
+
+        buttonMusicMinus = new Button(GameResources.minusButton,0,0,0,0);
+
+        buttonBack = new Button(GameResources.backButton,0,0,0,0);
     }
 
     @Override
     public void show() {
-
-        batch = new SpriteBatch();
-
-        font = new BitmapFont();
-
-        background = new Texture("menu_bg.png");
-
-        volumePanel = new Texture("music.png");
-
-        fullscreenOn =
-                new Texture("FULLSCREEN_ON.png");
-
-        fullscreenOff =
-                new Texture("FULLSCREEN_OFF.png");
-
-        camera = new OrthographicCamera();
-
-        viewport = new ScreenViewport(camera);
-
-        viewport.apply();
-
-        fullscreenButton =
-                new Button(fullscreenOff, 0,0,0,0);
-
-        buttonMusicPlus =
-                new Button(new Texture("PLUS.png"),0,0,0,0);
-
-        buttonMusicMinus =
-                new Button(new Texture("MINUS.png"),0,0,0,0);
-
-        buttonBack =
-                new Button(new Texture("BACK.png"),0,0,0,0);
 
         updateLayout();
 
@@ -91,6 +52,8 @@ public class OptionScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
+
+        game.uiViewport.apply();
 
         Gdx.gl.glClearColor(0,0,0,1);
 
@@ -102,7 +65,7 @@ public class OptionScreen implements Screen, InputProcessor {
                 0
         );
 
-        camera.unproject(mousePos);
+        game.uiViewport.unproject(mousePos);
 
         float mouseX = mousePos.x;
         float mouseY = mousePos.y;
@@ -115,26 +78,17 @@ public class OptionScreen implements Screen, InputProcessor {
 
         buttonBack.update(mouseX, mouseY);
 
-        camera.update();
+        game.batch.setProjectionMatrix(game.uiCamera.combined);
 
-        batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
 
-        batch.begin();
-
-        float w = Gdx.graphics.getWidth();
-
-        float h = Gdx.graphics.getHeight();
-
-        // ===== FONT SCALE =====
-
-        font.getData().setScale(
-                h * 0.0038f
-        );
+        float w = game.uiViewport.getWorldWidth();
+        float h = game.uiViewport.getWorldHeight();
 
         // ===== BACKGROUND =====
 
-        batch.draw(
-                background,
+        game.batch.draw(
+                GameResources.menu_bg,
                 0,
                 0,
                 w,
@@ -145,17 +99,17 @@ public class OptionScreen implements Screen, InputProcessor {
 
         if (Gdx.graphics.isFullscreen()) {
 
-            fullscreenButton.setTexture(fullscreenOn);
+            fullscreenButton.setTexture(GameResources.fullscreenOn);
 
         } else {
 
-            fullscreenButton.setTexture(fullscreenOff);
+            fullscreenButton.setTexture(GameResources.fullscreenOff);
         }
 
         // ===== VOLUME PANEL =====
 
-        batch.draw(
-                volumePanel,
+        game.batch.draw(
+                GameResources.musicPanel,
                 panelX,
                 panelY,
                 panelWidth,
@@ -165,7 +119,7 @@ public class OptionScreen implements Screen, InputProcessor {
         // ===== VOLUME TEXT =====
 
         font.draw(
-                batch,
+                game.batch,
                 "" + (int)(Options.musicVolume * 100),
                 panelX + panelWidth * 0.62f,
                 panelY + panelHeight * 0.6f
@@ -173,22 +127,22 @@ public class OptionScreen implements Screen, InputProcessor {
 
         // ===== BUTTONS =====
 
-        fullscreenButton.draw(batch);
+        fullscreenButton.draw(game.batch);
 
-        buttonMusicMinus.draw(batch);
+        buttonMusicMinus.draw(game.batch);
 
-        buttonMusicPlus.draw(batch);
+        buttonMusicPlus.draw(game.batch);
 
-        buttonBack.draw(batch);
+        buttonBack.draw(game.batch);
 
-        batch.end();
+        game.batch.end();
     }
 
     private void updateLayout() {
 
-        float w = Gdx.graphics.getWidth();
+        float w = game.uiViewport.getWorldWidth();
 
-        float h = Gdx.graphics.getHeight();
+        float h = game.uiViewport.getWorldHeight();
 
         float centerX = w / 2f;
 
@@ -221,6 +175,10 @@ public class OptionScreen implements Screen, InputProcessor {
 
         panelY = h * 0.245f;
         buttonY = h * 0.41f;
+
+
+        // Font
+        font.getData().setScale(h * 0.0038f);
 
         // =====================================
         // PLUS / MINUS BUTTONS
@@ -281,7 +239,7 @@ public class OptionScreen implements Screen, InputProcessor {
                 0
         );
 
-        camera.unproject(touchPos);
+        game.uiViewport.unproject(touchPos);
 
         float x = touchPos.x;
 
@@ -291,29 +249,7 @@ public class OptionScreen implements Screen, InputProcessor {
 
         if (fullscreenButton.isTapped(x, y)) {
 
-            Options.fullscreen =
-                    !Options.fullscreen;
-
-            if (Options.fullscreen) {
-
-                oldWindowWidth =
-                        Gdx.graphics.getWidth();
-
-                oldWindowHeight =
-                        Gdx.graphics.getHeight();
-
-                Gdx.graphics.setFullscreenMode(
-                        Gdx.graphics.getDisplayMode()
-                );
-
-            } else {
-
-                Gdx.graphics.setWindowedMode(
-                        oldWindowWidth,
-                        oldWindowHeight
-                );
-            }
-
+            applyFullscreenToggle();
             return true;
         }
 
@@ -348,11 +284,7 @@ public class OptionScreen implements Screen, InputProcessor {
         // ===== BACK =====
 
         if (buttonBack.isTapped(x, y)) {
-
-            game.setScreen(
-                    new MenuScreen(game)
-            );
-
+            game.setScreen(game.menuScreen);
             return true;
         }
 
@@ -362,9 +294,35 @@ public class OptionScreen implements Screen, InputProcessor {
     @Override
     public void resize(int width, int height) {
 
-        viewport.update(width, height, true);
+        game.uiViewport.update(width, height, true);
 
         updateLayout();
+    }
+
+    private void applyFullscreenToggle() {
+
+        Options.fullscreen = !Options.fullscreen;
+
+        if (Options.fullscreen) {
+
+            oldWindowWidth = Gdx.graphics.getWidth();
+            oldWindowHeight = Gdx.graphics.getHeight();
+
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        } else {
+
+            Gdx.graphics.setWindowedMode(oldWindowWidth, oldWindowHeight);
+        }
+
+        game.uiViewport.update(
+                Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight(),
+                true
+        );
+
+        updateLayout();
+
+
     }
 
     @Override public void pause() {}
@@ -374,25 +332,8 @@ public class OptionScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
 
-        batch.dispose();
-
         font.dispose();
 
-        background.dispose();
-
-        volumePanel.dispose();
-
-        fullscreenOn.dispose();
-
-        fullscreenOff.dispose();
-
-        fullscreenButton.dispose();
-
-        buttonMusicPlus.dispose();
-
-        buttonMusicMinus.dispose();
-
-        buttonBack.dispose();
     }
 
     @Override

@@ -4,41 +4,60 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MyGdxGame extends Game {
+
 	public SpriteBatch batch;
-	public OrthographicCamera camera;
-	public Viewport viewport;
+	public OrthographicCamera gameCamera;
+	public OrthographicCamera uiCamera;
+	public Viewport gameViewport;
+	public Viewport uiViewport;
+
 	public GameScreen gameScreen;
+	public MenuScreen menuScreen;
+	public OptionScreen optionScreen;
 
 	@Override
 	public void create() {
+
+
+
 		batch = new SpriteBatch();
-		camera = new OrthographicCamera();
+		gameCamera = new OrthographicCamera();
+		uiCamera = new OrthographicCamera();
 
-		viewport = new FitViewport(GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT, camera);
-		viewport.apply(true);
+		gameViewport = new FitViewport(
+				GameSettings.SCREEN_WIDTH,
+				GameSettings.SCREEN_HEIGHT,
+				gameCamera
+		);
 
-		GameResources resources = new GameResources();
-		resources.loadTextures();
+		uiViewport = new ScreenViewport(uiCamera);
+
+		gameViewport.apply(true);
+		uiViewport.apply(true);
+
+		GameResources.loadTextures();
 
 		gameScreen = new GameScreen(this);
-		setScreen(new MenuScreen(this));
+		menuScreen = new MenuScreen(this);
+		optionScreen = new OptionScreen(this);
+
+		setScreen(menuScreen);
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height, true);
+
+		gameViewport.update(width, height, true);
+		uiViewport.update(width, height, true);
 	}
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		batch.dispose();
-		if (gameScreen != null) {
-			gameScreen.dispose();
-		}
 		GameResources.dispose();
 	}
 }
