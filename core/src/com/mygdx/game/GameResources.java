@@ -31,6 +31,7 @@ public class GameResources {
     public static Texture fullscreenOff;
 
     public static Texture musicPanel;
+    public static Texture wheelTexture;
 
     public static void loadTextures() {
 
@@ -65,6 +66,8 @@ public class GameResources {
         fullscreenOff = new Texture("FULLSCREEN_OFF.png");
 
         musicPanel = new Texture("music.png");
+
+        wheelTexture = new Texture("wheel.png");
     }
 
     public static void dispose() {
@@ -93,5 +96,6 @@ public class GameResources {
         if (fullscreenOff != null) fullscreenOff.dispose();
 
         if (musicPanel != null) musicPanel.dispose();
+        if (wheelTexture != null) wheelTexture.dispose();
     }
 }
