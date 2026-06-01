@@ -89,6 +89,7 @@ public class MenuScreen implements Screen, InputProcessor {
         game.uiViewport.unproject(t);
 
         if (buttonStart.isTapped(t.x,t.y)) {
+            game.gameScreen.startNewGame();
             game.setScreen(game.gameScreen);
             return true;
         }

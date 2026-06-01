@@ -159,14 +159,13 @@ public class PauseScreen implements Screen, InputProcessor {
 
         if (restartButton.isTapped(touchPos.x, touchPos.y)) {
 
-            game.gameScreen.reset();
+            game.gameScreen.startNewGame();
             game.setScreen(game.gameScreen);
 
             return true;
         }
 
         if (menuButton.isTapped(touchPos.x, touchPos.y)) {
-            game.gameScreen.reset();
             game.setScreen(game.menuScreen);
 
             return true;

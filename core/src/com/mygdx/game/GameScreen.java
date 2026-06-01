@@ -6,6 +6,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -48,8 +49,18 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private float startTouchAngle;
     private float dynamicRamSpeedX;
 
+    private float pedalSize;
+
+    private float speedometerY;
+
+    float speedometerWidth;
+    float speedometerHeight;
+
+    private final GlyphLayout speedLayout = new GlyphLayout();
+
     public GameScreen(MyGdxGame game) {
         this.game = game;
+        startTime = TimeUtils.millis();
 
         font = new BitmapFont();
         font.getData().setScale(1.5f);
@@ -85,8 +96,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public void show() {
-
-        startTime = TimeUtils.millis();
         Gdx.input.setInputProcessor(this);
 
         updateLayout();
@@ -94,17 +103,46 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        // Получаем текущие размеры экрана из ExtendViewport (первая версия)
         float worldWidth = game.gameViewport.getWorldWidth();
-        //float worldHeight = game.gameViewport.getWorldHeight();
+        float worldHeight = game.gameViewport.getWorldHeight();
 
-        // Расчет динамического отступа для правого края под физический экран
-        float rightEdgeX = worldWidth - GameSettings.BUTTON_SIZE - 40f;
+// =====================================
+// PEDALS
+// =====================================
 
-        // Пересчет позиций педалей и рамки спидометра
-        gasButtonRect.set(rightEdgeX, GameSettings.GAZ_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
-        brakeButtonRect.set(rightEdgeX, GameSettings.BRAKE_Y, GameSettings.BUTTON_SIZE, GameSettings.BUTTON_SIZE);
-        dynamicRamSpeedX = rightEdgeX - (GameSettings.GAS_X - GameSettings.RAM_SPEED_X);
+        pedalSize = worldHeight * 0.18f;
+
+        float pedalSpacing = pedalSize * 0.15f;
+
+        float pedalMargin = worldHeight * 0.03f;
+
+        float pedalY = pedalMargin;
+
+        float gasX = worldWidth - pedalSize - pedalMargin;
+
+        float brakeX = gasX - pedalSize - pedalSpacing;
+
+        gasButtonRect.set(gasX, pedalY, pedalSize, pedalSize);
+
+        brakeButtonRect.set(brakeX, pedalY - 10, pedalSize, pedalSize + 13);
+
+        // =====================================
+        // SPEEDOMETER
+        // =====================================
+
+        speedometerWidth = pedalSize * 1.8f;
+        speedometerHeight = pedalSize;
+
+        float speedometerSize = pedalSize;
+
+        float pedalsCenterX =
+                (brakeButtonRect.x + gasButtonRect.x + gasButtonRect.width) / 2f;
+
+        dynamicRamSpeedX =
+                pedalsCenterX - speedometerWidth / 2f;
+
+        speedometerY = pedalY + pedalSize + pedalMargin - 40;
+
 
         // Позиционирование руля у левого края
         float wSize = GameSettings.WHEEL_SIZE;
@@ -234,7 +272,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float worldHeight = game.gameViewport.getWorldHeight();
 
         // Отрисовка интерфейса педалей по динамическим координатам
-        game.batch.draw(GameResources.ramSpeed, GameSettings.RAM_SPEED_X, GameSettings.RAM_SPEED_Y, gasButtonRect.width, gasButtonRect.height);
+        game.batch.draw(GameResources.ramSpeed, dynamicRamSpeedX, speedometerY, speedometerWidth, speedometerHeight);
         game.batch.draw(currentGasTexture, gasButtonRect.x, gasButtonRect.y, gasButtonRect.width, gasButtonRect.height);
         game.batch.draw(currentBrakeTexture, brakeButtonRect.x, brakeButtonRect.y, brakeButtonRect.width, brakeButtonRect.height);
 
@@ -242,7 +280,16 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         steeringWheel.draw(game.batch);
 
         // Текст скорости
-        font.draw(game.batch, " " + (int)currentSpeed, gasButtonRect.x + 10, GameSettings.RAM_SPEED_Y + 60);
+        String speedText = String.valueOf((int) currentSpeed);
+
+        speedLayout.setText(font, speedText);
+
+        font.draw(
+                game.batch,
+                speedLayout,
+                dynamicRamSpeedX + (speedometerWidth - speedLayout.width) / 2f,
+                speedometerY + (speedometerHeight + speedLayout.height) / 2f
+        );
 
         // Таймер и звезды
         long totalSeconds = TimeUtils.timeSinceMillis(startTime) / 1000;
@@ -279,10 +326,16 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         );
     }
 
-    public void reset() {
+    public void startNewGame() {
+
+        startTime = TimeUtils.millis();
+
         currentSpeed = 0;
+
         isGasPressed = false;
         isBrakePressed = false;
+
+        steeringWheel.setRotation(0);
     }
 
     @Override
