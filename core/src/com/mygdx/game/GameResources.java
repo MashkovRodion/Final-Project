@@ -33,6 +33,11 @@ public class GameResources {
     public static Texture musicPanel;
     public static Texture wheelTexture;
 
+    public static Texture pauseButton;
+    public static Texture continueButton;
+    public static Texture restartButton;
+    public static Texture menuPauseButton;
+
     public static void loadTextures() {
 
         gasNormal = new Texture("gas and brake/gas_normal.png");
@@ -68,6 +73,12 @@ public class GameResources {
         musicPanel = new Texture("music.png");
 
         wheelTexture = new Texture("wheel.png");
+
+        pauseButton = new Texture("Pause.png");
+
+        continueButton = new Texture("Continue.png");
+        restartButton = new Texture("Restart.png");
+        menuPauseButton = new Texture("Menu.png");
     }
 
     public static void dispose() {
@@ -97,5 +108,11 @@ public class GameResources {
 
         if (musicPanel != null) musicPanel.dispose();
         if (wheelTexture != null) wheelTexture.dispose();
+
+        if (pauseButton != null) pauseButton.dispose();
+
+        if (continueButton != null) continueButton.dispose();
+        if (restartButton != null) restartButton.dispose();
+        if (menuPauseButton != null) menuPauseButton.dispose();
     }
 }
