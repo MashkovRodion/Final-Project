@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector3;
 
 public class OptionScreen implements Screen, InputProcessor {
@@ -27,6 +28,8 @@ public class OptionScreen implements Screen, InputProcessor {
     private float panelY;
     private float panelWidth;
     private float panelHeight;
+
+    private final GlyphLayout volumeLayout = new GlyphLayout();
 
     public OptionScreen(MyGdxGame game) {
 
@@ -118,12 +121,18 @@ public class OptionScreen implements Screen, InputProcessor {
 
         // ===== VOLUME TEXT =====
 
+        String volumeText = "" + (int)(Options.musicVolume * 100);
+
+        volumeLayout.setText(font, volumeText);
+
+        float textOffsetX = panelWidth * 0.19f;
+        float textOffsetY = panelHeight * 0.05f;
+
         font.draw(
                 game.batch,
-                "" + (int)(Options.musicVolume * 100),
-                panelX + panelWidth * 0.62f,
-                panelY + panelHeight * 0.6f
-        );
+                volumeLayout,
+                panelX + (panelWidth - volumeLayout.width) / 2f + textOffsetX,
+                panelY + panelHeight / 2f + volumeLayout.height / 2f + textOffsetY);
 
         // ===== BUTTONS =====
 
