@@ -15,6 +15,8 @@ public class MyGdxGame extends Game {
 	public Viewport gameViewport;
 	public Viewport uiViewport;
 
+
+	public PauseScreen pauseScreen;
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public OptionScreen optionScreen;
@@ -39,6 +41,7 @@ public class MyGdxGame extends Game {
 
 		GameResources.loadTextures();
 
+		pauseScreen = new PauseScreen(this);
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
 		optionScreen = new OptionScreen(this);

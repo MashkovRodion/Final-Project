@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     private final MyGdxGame game;
     private final BitmapFont font;
@@ -30,6 +31,8 @@ public class GameScreen extends ScreenAdapter {
 
     private final Vector3 touchPos;
     private long startTime;
+
+    private Button pauseButton;
 
     private Texture currentGasTexture;
     private Texture currentBrakeTexture;
@@ -66,13 +69,27 @@ public class GameScreen extends ScreenAdapter {
         currentGasTexture = GameResources.gasNormal;
         currentBrakeTexture = GameResources.brakeNormal;
 
+        pauseButton =
+                new Button(
+                        GameResources.pauseButton,
+                        0,
+                        0,
+                        0,
+                        0
+                );
+
+
         Texture wheelTexture = GameResources.wheelTexture;
         steeringWheel = new Sprite(wheelTexture);
     }
 
     @Override
     public void show() {
+
         startTime = TimeUtils.millis();
+        Gdx.input.setInputProcessor(this);
+
+        updateLayout();
     }
 
     @Override
@@ -104,11 +121,29 @@ public class GameScreen extends ScreenAdapter {
 
         // Хитбокс руля (чуть шире для удобства тача)
         wheelBoundsRect.set(wX - 20, wY - 20, wSize + 40, wSize + 40);
+
+        updateLayout();
     }
 
     @Override
     public void render(float delta) {
         handleInput();
+
+
+        Vector3 mousePos = new Vector3(
+                Gdx.input.getX(),
+                Gdx.input.getY(),
+                0
+        );
+
+        game.gameViewport.unproject(mousePos);
+
+        pauseButton.update(
+                mousePos.x,
+                mousePos.y
+        );
+
+
         updateSpeed(delta);
         draw(delta);
     }
@@ -117,6 +152,7 @@ public class GameScreen extends ScreenAdapter {
         boolean gasTouched = false;
         boolean brakeTouched = false;
         boolean stillHoldingWheel = false;
+
 
         // Опрос мультитача (до 5 пальцев)
         for (int i = 0; i < 5; i++) {
@@ -186,7 +222,7 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    private void draw(float delta) {
+    public void draw(float delta) {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -221,15 +257,90 @@ public class GameScreen extends ScreenAdapter {
         game.batch.draw((totalSeconds >= 60) ? GameResources.star_tusk : GameResources.star, 40, starY, 40, 40);
         game.batch.draw((totalSeconds >= 40) ? GameResources.star_tusk : GameResources.star, 90, starY, 40, 40);
         game.batch.draw((totalSeconds >= 20) ? GameResources.star_tusk : GameResources.star, 140, starY, 40, 40);
+        pauseButton.draw(game.batch);
 
         game.batch.end();
+    }
+
+    private void updateLayout() {
+
+        float w = game.gameViewport.getWorldWidth();
+        float h = game.gameViewport.getWorldHeight();
+
+        float buttonSize = h * 0.08f;
+        float margin = h * 0.02f;
+        float buttonWidth = h * 0.15f;
+
+        pauseButton.setPosition(
+                w - buttonSize - margin - 10,
+                h - buttonSize - margin + 10,
+                buttonWidth,
+                buttonSize
+        );
+    }
+
+    public void reset() {
+        currentSpeed = 0;
+        isGasPressed = false;
+        isBrakePressed = false;
     }
 
     @Override
     public void dispose() {
         font.dispose();
-        if (steeringWheel != null && steeringWheel.getTexture() != null) {
-            steeringWheel.getTexture().dispose();
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        touchPos.set(screenX, screenY, 0);
+
+        game.gameViewport.unproject(touchPos);
+
+        if (pauseButton.isTapped(touchPos.x, touchPos.y)) {
+
+            game.setScreen(game.pauseScreen);
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        return false;
     }
 }
