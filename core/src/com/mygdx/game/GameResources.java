@@ -81,6 +81,9 @@ public class GameResources {
         menuPauseButton = new Texture("Menu.png");
     }
 
+    public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
+    public static final String BRAKE_MUSIC_PATH = "sounds/brake.mp3";
+
     public static void dispose() {
 
         if (gasNormal != null) gasNormal.dispose();
