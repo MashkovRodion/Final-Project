@@ -40,7 +40,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private Texture currentBrakeTexture;
 
     private Sprite steeringWheel;
-    private Sprite carSprite;  // ДОБАВЛЕНО - спрайт машины
+    private Sprite carSprite;
     private final Rectangle wheelBoundsRect;
     private float wheelCenterX;
     private float wheelCenterY;
@@ -55,17 +55,25 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     float speedometerWidth;
     float speedometerHeight;
 
-
-    private boolean isLeftKeyPressed;
-    private boolean isRightKeyPressed;
-    private boolean isGasKeyPressed;
-    private boolean isBrakeKeyPressed;
-
     private ObstacleManager obstacleManager;
 
     private final GlyphLayout speedLayout = new GlyphLayout();
 
     private Track track;
+
+    private float carX;
+    private float carY;
+    private float carWidth;
+    private float carHeight;
+    private float roadLeftBound;
+    private float roadRightBound;
+    private float roadBottomBound;
+    private float roadTopBound;
+    private float carMoveSpeed = 500f;
+    private float carVerticalSpeed = 300f;
+
+    // Для бесконечного вращения руля
+    private float wheelRotation = 0f;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
@@ -93,11 +101,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Texture wheelTexture = GameResources.wheelTexture;
         steeringWheel = new Sprite(wheelTexture);
 
-        // ДОБАВЛЕНО - создание спрайта машины с текущим скином
         carSprite = new Sprite(SkinManager.getCurrentCarTexture());
     }
 
-    // ДОБАВЛЕНО - метод для обновления скина машины
     public void updateCarSkin() {
         if (carSprite != null) {
             carSprite.setTexture(SkinManager.getCurrentCarTexture());
@@ -129,6 +135,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     public void resize(int width, int height) {
         float worldWidth = game.gameViewport.getWorldWidth();
         float worldHeight = game.gameViewport.getWorldHeight();
+
+        // Границы трассы (X)
+        roadLeftBound = worldWidth * 0.198f;
+        roadRightBound = worldWidth * 0.8f;
+
+        // Границы трассы (Y) - машина может двигаться по вертикали
+        roadBottomBound = worldHeight * 0.05f;
+        roadTopBound = worldHeight * 0.75f;
 
         pedalSize = worldHeight * 0.18f;
         float pedalSpacing = pedalSize * 0.15f;
@@ -166,46 +180,73 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 worldWidth,
                 GameResources.trackTexture.getHeight()
         );
-        // ДОБАВЛЕНО - позиционирование машины на экране
-        float carSize = worldHeight * 0.25f;
-        carSprite.setSize(carSize, carSize);
-        carSprite.setPosition(worldWidth - carSize - 20, worldHeight - carSize - 60);
-        carSprite.setOrigin(carSize / 2f, carSize / 2f);
+
+        carWidth = worldHeight * 0.18f;
+        carHeight = worldHeight * 0.18f;
+
+        // Начальная позиция по центру дороги и внизу экрана
+        float roadCenter = (roadLeftBound + roadRightBound - carWidth) / 2f;
+        carX = MathUtils.clamp(roadCenter, roadLeftBound, roadRightBound - carWidth);
+        carY = roadBottomBound;
+
+        carSprite.setSize(carWidth, carHeight);
+        carSprite.setPosition(carX, carY);
+        carSprite.setOrigin(carWidth / 2f, carHeight / 2f);
+
+        carSprite.setRotation(wheelRotation);
 
         updateLayout();
     }
 
     @Override
     public void render(float delta) {
-        handleInput();
-
+        handleInput(delta);
         updateSpeed(delta);
+        updateCarMovement(delta);
+
+        checkCollisions();
 
         track.update(currentSpeed * 5f, delta);
-
-        obstacleManager.update(
-                currentSpeed * 5f,
-                delta
-        );
+        obstacleManager.update(currentSpeed * 5f, delta);
 
         draw(delta);
 
-
-        Vector3 mousePos = new Vector3(
-                Gdx.input.getX(),
-                Gdx.input.getY(),
-                0
-        );
-
+        Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         game.gameViewport.unproject(mousePos);
-
-        pauseButton.update(
-                mousePos.x,
-                mousePos.y
-        );
+        pauseButton.update(mousePos.x, mousePos.y);
     }
 
-    private void handleInput() {
+    private void updateCarMovement(float delta) {
+        // Горизонтальное движение от руля
+        float moveDeltaX = (wheelRotation / -180f) * carMoveSpeed * delta;
+        carX += moveDeltaX;
+        carX = MathUtils.clamp(carX, roadLeftBound, roadRightBound - carWidth);
+
+        // Вертикальное движение от скорости (чем выше скорость, тем выше поднимается машина)
+        // Максимальная скорость = верхняя граница, минимальная = нижняя
+        float t = currentSpeed / maxSpeed; // от 0 до 1
+        float targetY = roadBottomBound + t * (roadTopBound - roadBottomBound);
+
+        // Плавное движение вверх/вниз
+        carY += (targetY - carY) * delta * 3f;
+        carY = MathUtils.clamp(carY, roadBottomBound, roadTopBound);
+
+        carSprite.setPosition(carX, carY);
+        carSprite.setRotation(wheelRotation);
+    }
+
+    private void checkCollisions() {
+        Rectangle carBounds = new Rectangle(carX, carY, carWidth, carHeight);
+
+        for (Obstacle obstacle : obstacleManager.getObstacles()) {
+            if (obstacle.getBounds().overlaps(carBounds)) {
+                startNewGame();
+                break;
+            }
+        }
+    }
+
+    private void handleInput(float delta) {
         boolean gasTouched = false;
         boolean brakeTouched = false;
         boolean stillHoldingWheel = false;
@@ -221,7 +262,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 if (!isWheelPressed && wheelBoundsRect.contains(touchPos.x, touchPos.y)) {
                     isWheelPressed = true;
                     wheelPointerId = i;
-                    startWheelRotation = steeringWheel.getRotation();
+                    startWheelRotation = wheelRotation;
                     startTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
                 }
 
@@ -229,11 +270,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     stillHoldingWheel = true;
                     float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
                     float angleDelta = currentTouchAngle - startTouchAngle;
-                    steeringWheel.setRotation(startWheelRotation + angleDelta);
-
-                    // ДОБАВЛЕНО - поворот машины при повороте руля
-                    float carRotation = steeringWheel.getRotation() * 0.5f;
-                    carSprite.setRotation(carRotation);
+                    wheelRotation = startWheelRotation + angleDelta;
+                    // Ограничиваем угол поворота руля (опционально)
+                    wheelRotation = MathUtils.clamp(wheelRotation, -180f, 180f);
+                    steeringWheel.setRotation(wheelRotation);
+                    carSprite.setRotation(wheelRotation);
                 }
             }
         }
@@ -243,18 +284,26 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             wheelPointerId = -1;
         }
 
-        isGasPressed = gasTouched || isGasKeyPressed;
-        isBrakePressed = brakeTouched || isBrakeKeyPressed;
+        // Автовозврат руля
+        if (!isWheelPressed) {
+            float returnSpeed = 300f * delta;
 
-        currentGasTexture =
-                isGasPressed ? GameResources.gasPressed : GameResources.gasNormal;
+            if (Math.abs(wheelRotation) < returnSpeed) {
+                wheelRotation = 0;
+            } else {
+                wheelRotation -= Math.signum(wheelRotation) * returnSpeed;
+            }
+            steeringWheel.setRotation(wheelRotation);
+            carSprite.setRotation(wheelRotation);
+        }
 
-        currentBrakeTexture =
-                isBrakePressed ? GameResources.brakePressed : GameResources.brakeNormal;
+        isGasPressed = gasTouched;
+        isBrakePressed = brakeTouched;
+
+        currentGasTexture = isGasPressed ? GameResources.gasPressed : GameResources.gasNormal;
+        currentBrakeTexture = isBrakePressed ? GameResources.brakePressed : GameResources.brakeNormal;
 
         if (game.audioManager != null) {
-
-            // Газ
             if (isGasPressed) {
                 if (!game.audioManager.gasMusic.isPlaying()) {
                     game.audioManager.gasMusic.setVolume(Options.soundVolume);
@@ -265,7 +314,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 game.audioManager.gasMusic.pause();
             }
 
-            // Тормоз
             if (isBrakePressed) {
                 if (!game.audioManager.brakeMusic.isPlaying()) {
                     game.audioManager.brakeMusic.setVolume(Options.soundVolume);
@@ -281,48 +329,20 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private void updateSpeed(float delta) {
         if (isGasPressed && !isBrakePressed) {
             currentSpeed += acceleration * delta;
-            if (currentSpeed > maxSpeed) {currentSpeed = maxSpeed;}
+            if (currentSpeed > maxSpeed) {
+                currentSpeed = maxSpeed;
+            }
         } else if (isBrakePressed && !isGasPressed) {
             currentSpeed -= brakeForce * delta;
-            if (currentSpeed < 0) {currentSpeed = 0;}
+            if (currentSpeed < 0) {
+                currentSpeed = 0;
+            }
         } else {
             currentSpeed *= friction;
-            if (currentSpeed < 0.5f) {currentSpeed = 0;}
-        }
-
-        // Автовозврат руля
-        if (!isWheelPressed && !isLeftKeyPressed && !isRightKeyPressed) {
-            float currentRotation = steeringWheel.getRotation();
-            float returnSpeed = 200f * delta;
-
-            if (Math.abs(currentRotation) < returnSpeed) {
-                steeringWheel.setRotation(0);
-                carSprite.setRotation(0);  // ДОБАВЛЕНО - возврат машины в исходное положение
-            } else {
-                steeringWheel.setRotation(currentRotation - Math.signum(currentRotation) * returnSpeed);
-                carSprite.setRotation(steeringWheel.getRotation() * 0.5f);  // ДОБАВЛЕНО
+            if (currentSpeed < 0.5f) {
+                currentSpeed = 0;
             }
         }
-
-        if (isLeftKeyPressed) {
-            steeringWheel.rotate(175f * delta);
-        }
-
-        if (isRightKeyPressed) {
-            steeringWheel.rotate(-175f * delta);
-        }
-
-        float rotation = steeringWheel.getRotation();
-
-        if (rotation > 180f) {
-            steeringWheel.setRotation(180f);
-        }
-
-        if (rotation < -180f) {
-            steeringWheel.setRotation(-180f);
-        }
-
-        carSprite.setRotation(steeringWheel.getRotation() * 0.5f);
     }
 
     public void draw(float delta) {
@@ -334,7 +354,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         game.batch.begin();
 
         track.draw(game.batch);
-
         obstacleManager.draw(game.batch);
 
         float worldWidth = game.gameViewport.getWorldWidth();
@@ -345,8 +364,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         game.batch.draw(currentBrakeTexture, brakeButtonRect.x, brakeButtonRect.y, brakeButtonRect.width, brakeButtonRect.height);
 
         steeringWheel.draw(game.batch);
-
-        // ДОБАВЛЕНО - отрисовка машины со скином
         carSprite.draw(game.batch);
 
         String speedText = String.valueOf((int) currentSpeed);
@@ -379,9 +396,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float w = game.gameViewport.getWorldWidth();
         float h = game.gameViewport.getWorldHeight();
 
-        float buttonSize = h * 0.08f;
+        float buttonSize = h * 0.1f;
         float margin = h * 0.02f;
-        float buttonWidth = h * 0.15f;
+        float buttonWidth = h * 0.2f;
 
         pauseButton.setPosition(
                 w - buttonSize - margin - 10,
@@ -395,6 +412,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         startTime = TimeUtils.millis();
         currentSpeed = 0;
 
+        float roadCenter = (roadLeftBound + roadRightBound - carWidth) / 2f;
+        carX = MathUtils.clamp(roadCenter, roadLeftBound, roadRightBound - carWidth);
+        carY = roadBottomBound;
+        carSprite.setPosition(carX, carY);
+
         resetControls();
 
         if (obstacleManager != null) {
@@ -407,20 +429,17 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     }
 
     private void resetControls() {
-
         isGasPressed = false;
         isBrakePressed = false;
-
-        isLeftKeyPressed = false;
-        isRightKeyPressed = false;
-
         isWheelPressed = false;
         wheelPointerId = -1;
 
         currentGasTexture = GameResources.gasNormal;
         currentBrakeTexture = GameResources.brakeNormal;
+
+        wheelRotation = 0;
         steeringWheel.setRotation(0);
-        carSprite.setRotation(0);  // ДОБАВЛЕНО
+        carSprite.setRotation(0);
 
         if (game.audioManager != null) {
             if (game.audioManager.gasMusic.isPlaying()) {
@@ -460,30 +479,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-
         if (keycode == Input.Keys.ESCAPE) {
             resetControls();
             game.setScreen(game.pauseScreen);
-            return true;
-        }
-
-        if (keycode == Input.Keys.W) {
-            isGasKeyPressed = true;
-            return true;
-        }
-
-        if (keycode == Input.Keys.S) {
-            isBrakeKeyPressed = true;
-            return true;
-        }
-
-        if (keycode == Input.Keys.A) {
-            isLeftKeyPressed = true;
-            return true;
-        }
-
-        if (keycode == Input.Keys.D) {
-            isRightKeyPressed = true;
             return true;
         }
         return false;
@@ -491,26 +489,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.W) {
-            isGasKeyPressed = false;
-            return true;
-        }
-
-        if (keycode == Input.Keys.S) {
-            isBrakeKeyPressed = false;
-            return true;
-        }
-
-        if (keycode == Input.Keys.A) {
-            isLeftKeyPressed = false;
-            return true;
-        }
-
-        if (keycode == Input.Keys.D) {
-            isRightKeyPressed = false;
-            return true;
-        }
-
         return false;
     }
 
