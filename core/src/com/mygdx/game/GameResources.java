@@ -41,6 +41,7 @@ public class GameResources {
 
     public static Texture skinsButton;
     public static Texture checkmark;
+    public static Texture  clearRecords;
 
     public static void loadTextures() {
 
@@ -87,6 +88,7 @@ public class GameResources {
         restartButton = new Texture("Restart.png");
         menuPauseButton = new Texture("Menu.png");
         checkmark = new Texture("stars/checkmark.png");
+        clearRecords = new Texture("ClearRecords.png/");
     }
 
     public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
@@ -130,5 +132,6 @@ public class GameResources {
         if (restartButton != null) restartButton.dispose();
         if (menuPauseButton != null) menuPauseButton.dispose();
         if (checkmark != null) checkmark.dispose();
+        if (clearRecords != null) clearRecords.dispose();
     }
 }

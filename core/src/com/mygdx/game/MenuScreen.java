@@ -45,8 +45,8 @@ public class MenuScreen implements Screen, InputProcessor {
         float bh = h * 0.4f;
         float cx = w / 2f - bw / 2f;
 
-        buttonStart.setPosition(cx, h * 0.54f, bw, bh);
-        buttonOptions.setPosition(cx, h * 0.27f, bw, bh);
+        buttonStart.setPosition(cx, h * 0.48f, bw, bh);
+        buttonOptions.setPosition(cx, h * 0.25f, bw, bh);
         buttonQuit.setPosition(cx, h * 0.01f, bw, bh);
 
         // Кнопка скинов - больше по высоте и левее

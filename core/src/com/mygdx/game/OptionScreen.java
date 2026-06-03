@@ -23,6 +23,8 @@ public class OptionScreen implements Screen, InputProcessor {
     private Button buttonSoundMinus;
 
     private Button buttonBack;
+    private Button clearRecordsButton;
+
 
     private int oldWindowWidth = 1280;
     private int oldWindowHeight = 720;
@@ -54,6 +56,8 @@ public class OptionScreen implements Screen, InputProcessor {
         buttonSoundMinus = new Button(GameResources.minusButton,0,0,0,0);
 
         buttonBack = new Button(GameResources.backButton,0,0,0,0);
+        clearRecordsButton = new Button(GameResources.clearRecords, 0, 0, 0, 0);
+
     }
 
     @Override
@@ -80,13 +84,13 @@ public class OptionScreen implements Screen, InputProcessor {
         float mouseY = mousePos.y;
 
         fullscreenButton.update(mouseX, mouseY);
+        clearRecordsButton.update(mouseX, mouseY);
         buttonMusicPlus.update(mouseX, mouseY);
         buttonMusicMinus.update(mouseX, mouseY);
 
         buttonSoundPlus.update(mouseX, mouseY);
         buttonSoundMinus.update(mouseX, mouseY);
 
-        buttonBack.update(mouseX, mouseY);
 
         game.batch.setProjectionMatrix(game.uiCamera.combined);
         game.batch.begin();
@@ -162,6 +166,8 @@ public class OptionScreen implements Screen, InputProcessor {
         buttonSoundMinus.draw(game.batch);
         buttonSoundPlus.draw(game.batch);
 
+        clearRecordsButton.draw(game.batch);
+
         buttonBack.draw(game.batch);
 
         game.batch.end();
@@ -178,9 +184,19 @@ public class OptionScreen implements Screen, InputProcessor {
 
         fullscreenButton.setPosition(
                 centerX - fullscreenWidth / 2f,
-                h * 0.45f,
+                h * 0.52f,
                 fullscreenWidth,
                 fullscreenHeight
+        );
+
+        float clearRecordsWidth = w * 0.33f;
+        float clearRecordsHeight = h * 0.31f;
+
+        clearRecordsButton.setPosition(
+                centerX - clearRecordsWidth / 2f,
+                h * 0.445f,
+                clearRecordsWidth,
+                clearRecordsHeight
         );
 
         // VOLUME PANEL
@@ -257,6 +273,12 @@ public class OptionScreen implements Screen, InputProcessor {
 
         if (fullscreenButton.isTapped(x, y)) {
             applyFullscreenToggle();
+            return true;
+        }
+
+        // ===== CLEAR RECORDS =====
+        if (clearRecordsButton.isTapped(x, y)) {
+            // Пока что ничего не происходит
             return true;
         }
 
