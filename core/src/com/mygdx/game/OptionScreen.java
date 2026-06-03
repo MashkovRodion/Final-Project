@@ -323,10 +323,9 @@ public class OptionScreen implements Screen, InputProcessor {
             Gdx.graphics.setWindowedMode(oldWindowWidth, oldWindowHeight);
         }
 
-        game.uiViewport.update(
+        game.gameScreen.resize(
                 Gdx.graphics.getWidth(),
-                Gdx.graphics.getHeight(),
-                true
+                Gdx.graphics.getHeight()
         );
 
         updateLayout();

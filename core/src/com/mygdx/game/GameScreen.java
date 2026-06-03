@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.Input;
 
 public class GameScreen extends ScreenAdapter implements InputProcessor {
 
@@ -56,7 +57,17 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     float speedometerWidth;
     float speedometerHeight;
 
+
+    private boolean isLeftKeyPressed;
+    private boolean isRightKeyPressed;
+    private boolean isGasKeyPressed;
+    private boolean isBrakeKeyPressed;
+
+    private ObstacleManager obstacleManager;
+
     private final GlyphLayout speedLayout = new GlyphLayout();
+
+    private Track track;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
@@ -89,7 +100,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                         0
                 );
 
-
         Texture wheelTexture = GameResources.wheelTexture;
         steeringWheel = new Sprite(wheelTexture);
     }
@@ -97,6 +107,20 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this);
+
+        if (track == null) {
+            track = new Track(
+                    GameResources.trackTexture,
+                    game.gameViewport.getWorldWidth(),
+                    GameResources.trackTexture.getHeight()
+            );
+        }
+
+        if (obstacleManager == null) {
+            obstacleManager = new ObstacleManager(
+                    game.gameViewport.getWorldWidth()
+            );
+        }
 
         updateLayout();
     }
@@ -160,12 +184,29 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         // Хитбокс руля (чуть шире для удобства тача)
         wheelBoundsRect.set(wX - 20, wY - 20, wSize + 40, wSize + 40);
 
+        track = new Track(
+                GameResources.trackTexture,
+                worldWidth,
+                GameResources.trackTexture.getHeight()
+        );
+
         updateLayout();
     }
 
     @Override
     public void render(float delta) {
         handleInput();
+
+        updateSpeed(delta);
+
+        track.update(currentSpeed * 5f, delta);
+
+        obstacleManager.update(
+                currentSpeed * 5f,
+                delta
+        );
+
+        draw(delta);
 
 
         Vector3 mousePos = new Vector3(
@@ -180,10 +221,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 mousePos.x,
                 mousePos.y
         );
-
-
-        updateSpeed(delta);
-        draw(delta);
     }
 
     private void handleInput() {
@@ -233,30 +270,57 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             isBrakePressed = brakeTouched;
             currentBrakeTexture = brakeTouched ? GameResources.brakePressed : GameResources.brakeNormal;
         }
+
+        isGasPressed = gasTouched || isGasKeyPressed;
+        isBrakePressed = brakeTouched || isBrakeKeyPressed;
+
+        currentGasTexture =
+                isGasPressed ? GameResources.gasPressed : GameResources.gasNormal;
+
+        currentBrakeTexture =
+                isBrakePressed ? GameResources.brakePressed : GameResources.brakeNormal;
     }
 
     private void updateSpeed(float delta) {
-        if (isGasPressed) {
+        if (isGasPressed && !isBrakePressed) {
             currentSpeed += acceleration * delta;
-            if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
-        } else if (isBrakePressed) {
+            if (currentSpeed > maxSpeed) {currentSpeed = maxSpeed;}
+        } else if (isBrakePressed && !isGasPressed) {
             currentSpeed -= brakeForce * delta;
-            if (currentSpeed < 0) currentSpeed = 0;
+            if (currentSpeed < 0) {currentSpeed = 0;}
         } else {
             currentSpeed *= friction;
-            if (currentSpeed < 0.5f) currentSpeed = 0;
+            if (currentSpeed < 0.5f) {currentSpeed = 0;}
         }
 
         // Автовозврат руля
-        if (!isWheelPressed) {
+        if (!isWheelPressed && !isLeftKeyPressed && !isRightKeyPressed) {
             float currentRotation = steeringWheel.getRotation();
-            float returnSpeed = 400f * delta;
+            float returnSpeed = 200f * delta;
 
             if (Math.abs(currentRotation) < returnSpeed) {
                 steeringWheel.setRotation(0);
             } else {
                 steeringWheel.setRotation(currentRotation - Math.signum(currentRotation) * returnSpeed);
             }
+        }
+
+        if (isLeftKeyPressed) {
+            steeringWheel.rotate(175f * delta);
+        }
+
+        if (isRightKeyPressed) {
+            steeringWheel.rotate(-175f * delta);
+        }
+
+        float rotation = steeringWheel.getRotation();
+
+        if (rotation > 180f) {
+            steeringWheel.setRotation(180f);
+        }
+
+        if (rotation < -180f) {
+            steeringWheel.setRotation(-180f);
         }
     }
 
@@ -267,6 +331,10 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         game.gameViewport.apply();
         game.batch.setProjectionMatrix(game.gameCamera.combined);
         game.batch.begin();
+
+        track.draw(game.batch);
+
+        obstacleManager.draw(game.batch);
 
         float worldWidth = game.gameViewport.getWorldWidth();
         float worldHeight = game.gameViewport.getWorldHeight();
@@ -332,10 +400,35 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         currentSpeed = 0;
 
+        steeringWheel.setRotation(0);
+
+        resetControls();
+
+        if (obstacleManager != null) {
+            obstacleManager.clear();
+        }
+
+        if (track != null) {
+            track.reset();
+        }
+    }
+
+    private void resetControls() {
+
         isGasPressed = false;
         isBrakePressed = false;
 
-        steeringWheel.setRotation(0);
+        isGasKeyPressed = false;
+        isBrakeKeyPressed = false;
+
+        isLeftKeyPressed = false;
+        isRightKeyPressed = false;
+
+        isWheelPressed = false;
+        wheelPointerId = -1;
+
+        currentGasTexture = GameResources.gasNormal;
+        currentBrakeTexture = GameResources.brakeNormal;
     }
 
     @Override
@@ -345,11 +438,61 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+
+        if (keycode == Input.Keys.ESCAPE) {
+            resetControls();
+            game.setScreen(game.pauseScreen);
+            return true;
+        }
+
+        if (keycode == Input.Keys.W) {
+            isGasKeyPressed = true;
+            return true;
+        }
+
+        if (keycode == Input.Keys.S) {
+            isBrakeKeyPressed = true;
+            return true;
+        }
+
+        if (keycode == Input.Keys.A) {
+            isLeftKeyPressed = true;
+            return true;
+        }
+
+        if (keycode == Input.Keys.D) {
+            isRightKeyPressed = true;
+            return true;
+        }
+
+
+
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+
+        if (keycode == Input.Keys.W) {
+            isGasKeyPressed = false;
+            return true;
+        }
+
+        if (keycode == Input.Keys.S) {
+            isBrakeKeyPressed = false;
+            return true;
+        }
+
+        if (keycode == Input.Keys.A) {
+            isLeftKeyPressed = false;
+            return true;
+        }
+
+        if (keycode == Input.Keys.D) {
+            isRightKeyPressed = false;
+            return true;
+        }
+
         return false;
     }
 
@@ -366,6 +509,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         if (pauseButton.isTapped(touchPos.x, touchPos.y)) {
 
+            resetControls();
             game.setScreen(game.pauseScreen);
             return true;
         }

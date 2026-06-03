@@ -37,6 +37,13 @@ public class GameResources {
     public static Texture continueButton;
     public static Texture restartButton;
     public static Texture menuPauseButton;
+    public static Texture trackTexture;
+
+    public static Texture barrier1;
+    public static Texture barrier2;
+    public static Texture barrier3;
+    public static Texture barrier4;
+    public static Texture barrier5;
 
     public static void loadTextures() {
 
@@ -79,6 +86,14 @@ public class GameResources {
         continueButton = new Texture("Continue.png");
         restartButton = new Texture("Restart.png");
         menuPauseButton = new Texture("Menu.png");
+
+        trackTexture = new Texture("track.png");
+        barrier1 = new Texture("barier1.png");
+        barrier2 = new Texture("barier2.png");
+        barrier3 = new Texture("barier3.png");
+        barrier4 = new Texture("barier4.png");
+        barrier5 = new Texture("barier5.png");
+
     }
 
     public static void dispose() {
@@ -114,5 +129,13 @@ public class GameResources {
         if (continueButton != null) continueButton.dispose();
         if (restartButton != null) restartButton.dispose();
         if (menuPauseButton != null) menuPauseButton.dispose();
+
+        if (trackTexture != null) trackTexture.dispose();
+
+        if (barrier1 != null) barrier1.dispose();
+        if (barrier2 != null) barrier2.dispose();
+        if (barrier3 != null) barrier3.dispose();
+        if (barrier4 != null) barrier4.dispose();
+        if (barrier5 != null) barrier5.dispose();
     }
 }
