@@ -225,52 +225,22 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     startTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
                 }
 
-//                if (isWheelPressed && i == wheelPointerId) {
-//                    stillHoldingWheel = true;
-//                    float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
-//                    float angleDelta = currentTouchAngle - startTouchAngle;
-//                    steeringWheel.setRotation(startWheelRotation + angleDelta);
-//
-//                    // ДОБАВЛЕНО - поворот машины при повороте руля
-//                    float carRotation = steeringWheel.getRotation() * 0.5f;
-//                    carSprite.setRotation(carRotation);
-//                }
+                if (isWheelPressed && i == wheelPointerId) {
+                    stillHoldingWheel = true;
+                    float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
+                    float angleDelta = currentTouchAngle - startTouchAngle;
+                    steeringWheel.setRotation(startWheelRotation + angleDelta);
+
+                    // ДОБАВЛЕНО - поворот машины при повороте руля
+                    float carRotation = steeringWheel.getRotation() * 0.5f;
+                    carSprite.setRotation(carRotation);
+                }
             }
         }
 
         if (!stillHoldingWheel) {
             isWheelPressed = false;
             wheelPointerId = -1;
-        }
-
-        if (gasTouched != isGasPressed) {
-            isGasPressed = gasTouched;
-            currentGasTexture = gasTouched ? GameResources.gasPressed : GameResources.gasNormal;
-
-            if (game.audioManager != null) {
-                if (isGasPressed) {
-                    game.audioManager.gasMusic.setVolume(Options.soundVolume);
-                    game.audioManager.gasMusic.setLooping(true);
-                    game.audioManager.gasMusic.play();
-                } else {
-                    game.audioManager.gasMusic.pause();
-                }
-            }
-        }
-
-        if (brakeTouched != isBrakePressed) {
-            isBrakePressed = brakeTouched;
-            currentBrakeTexture = brakeTouched ? GameResources.brakePressed : GameResources.brakeNormal;
-
-            if (game.audioManager != null) {
-                if (isBrakePressed) {
-                    game.audioManager.brakeMusic.setVolume(Options.soundVolume);
-                    game.audioManager.brakeMusic.setLooping(true);
-                    game.audioManager.brakeMusic.play();
-                } else {
-                    game.audioManager.brakeMusic.pause();
-                }
-            }
         }
 
         isGasPressed = gasTouched || isGasKeyPressed;
@@ -281,6 +251,31 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         currentBrakeTexture =
                 isBrakePressed ? GameResources.brakePressed : GameResources.brakeNormal;
+
+        if (game.audioManager != null) {
+
+            // Газ
+            if (isGasPressed) {
+                if (!game.audioManager.gasMusic.isPlaying()) {
+                    game.audioManager.gasMusic.setVolume(Options.soundVolume);
+                    game.audioManager.gasMusic.setLooping(true);
+                    game.audioManager.gasMusic.play();
+                }
+            } else {
+                game.audioManager.gasMusic.pause();
+            }
+
+            // Тормоз
+            if (isBrakePressed) {
+                if (!game.audioManager.brakeMusic.isPlaying()) {
+                    game.audioManager.brakeMusic.setVolume(Options.soundVolume);
+                    game.audioManager.brakeMusic.setLooping(true);
+                    game.audioManager.brakeMusic.play();
+                }
+            } else {
+                game.audioManager.brakeMusic.pause();
+            }
+        }
     }
 
     private void updateSpeed(float delta) {
