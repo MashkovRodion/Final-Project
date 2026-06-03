@@ -135,9 +135,9 @@ public class OptionScreen implements Screen, InputProcessor {
 
         // ===== VOLUME PANEL (SOUNDS) =====
         game.batch.draw(
-                GameResources.musicPanel,
+                GameResources.sfxPanel,
                 panelX,
-                panelY - 200f,
+                panelY - 180f,
                 panelWidth,
                 panelHeight
         );
