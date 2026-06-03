@@ -39,6 +39,9 @@ public class GameResources {
     public static Texture menuPauseButton;
     public static Texture sfxPanel;
 
+    public static Texture skinsButton;
+    public static Texture checkmark;
+
     public static void loadTextures() {
 
         gasNormal = new Texture("gas and brake/gas_normal.png");
@@ -76,11 +79,14 @@ public class GameResources {
 
         wheelTexture = new Texture("wheel.png");
 
+        skinsButton = new Texture("skins.png");
+
         pauseButton = new Texture("Pause.png");
 
         continueButton = new Texture("Continue.png");
         restartButton = new Texture("Restart.png");
         menuPauseButton = new Texture("Menu.png");
+        checkmark = new Texture("stars/checkmark.png");
     }
 
     public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
@@ -105,6 +111,8 @@ public class GameResources {
 
         if (backButton != null) backButton.dispose();
 
+        if (skinsButton != null) skinsButton.dispose();
+
         if (plusButton != null) plusButton.dispose();
         if (minusButton != null) minusButton.dispose();
 
@@ -121,5 +129,6 @@ public class GameResources {
         if (continueButton != null) continueButton.dispose();
         if (restartButton != null) restartButton.dispose();
         if (menuPauseButton != null) menuPauseButton.dispose();
+        if (checkmark != null) checkmark.dispose();
     }
 }

@@ -21,6 +21,7 @@ public class MyGdxGame extends Game {
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public OptionScreen optionScreen;
+	public SkinSelectionScreen skinSelectionScreen;  // ДОБАВЛЕНО
 
 	@Override
 	public void create() {
@@ -40,14 +41,15 @@ public class MyGdxGame extends Game {
 		uiViewport.apply(true);
 
 		GameResources.loadTextures();
+		SkinManager.loadTextures();  // ДОБАВЛЕНО - загрузка текстур скинов
 
-		// ДОБАВЛЕНО: Создание менеджера звука до инициализации экранов
 		audioManager = new AudioManager();
 
 		pauseScreen = new PauseScreen(this);
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
 		optionScreen = new OptionScreen(this);
+		skinSelectionScreen = new SkinSelectionScreen(this);  // ДОБАВЛЕНО
 
 		setScreen(menuScreen);
 	}
@@ -71,6 +73,7 @@ public class MyGdxGame extends Game {
 			if (audioManager.brakeMusic != null) audioManager.brakeMusic.dispose();
 		}
 
+		SkinManager.disposeTextures();  // ДОБАВЛЕНО
 		GameResources.dispose();
 	}
 }
