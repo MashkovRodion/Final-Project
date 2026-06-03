@@ -44,6 +44,11 @@ public class GameResources {
     public static Texture barrier3;
     public static Texture barrier4;
     public static Texture barrier5;
+    public static Texture sfxPanel;
+
+    public static Texture skinsButton;
+    public static Texture checkmark;
+    public static Texture  clearRecords;
 
     public static void loadTextures() {
 
@@ -78,8 +83,11 @@ public class GameResources {
         fullscreenOff = new Texture("FULLSCREEN_OFF.png");
 
         musicPanel = new Texture("music.png");
+        sfxPanel = new Texture("SFX.png");
 
         wheelTexture = new Texture("wheel.png");
+
+        skinsButton = new Texture("skins.png");
 
         pauseButton = new Texture("Pause.png");
 
@@ -94,7 +102,12 @@ public class GameResources {
         barrier4 = new Texture("barier4.png");
         barrier5 = new Texture("barier5.png");
 
+        checkmark = new Texture("stars/checkmark.png");
+        clearRecords = new Texture("ClearRecords.png/");
     }
+
+    public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
+    public static final String BRAKE_MUSIC_PATH = "sounds/brake.mp3";
 
     public static void dispose() {
 
@@ -115,6 +128,8 @@ public class GameResources {
 
         if (backButton != null) backButton.dispose();
 
+        if (skinsButton != null) skinsButton.dispose();
+
         if (plusButton != null) plusButton.dispose();
         if (minusButton != null) minusButton.dispose();
 
@@ -122,6 +137,8 @@ public class GameResources {
         if (fullscreenOff != null) fullscreenOff.dispose();
 
         if (musicPanel != null) musicPanel.dispose();
+        if (sfxPanel != null) sfxPanel.dispose();
+
         if (wheelTexture != null) wheelTexture.dispose();
 
         if (pauseButton != null) pauseButton.dispose();
@@ -137,5 +154,7 @@ public class GameResources {
         if (barrier3 != null) barrier3.dispose();
         if (barrier4 != null) barrier4.dispose();
         if (barrier5 != null) barrier5.dispose();
+        if (checkmark != null) checkmark.dispose();
+        if (clearRecords != null) clearRecords.dispose();
     }
 }

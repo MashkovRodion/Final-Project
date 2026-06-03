@@ -15,11 +15,13 @@ public class MyGdxGame extends Game {
 	public Viewport gameViewport;
 	public Viewport uiViewport;
 
+	public AudioManager audioManager;
 
 	public PauseScreen pauseScreen;
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public OptionScreen optionScreen;
+	public SkinSelectionScreen skinSelectionScreen;  // ДОБАВЛЕНО
 
 	@Override
 	public void create() {
@@ -27,7 +29,6 @@ public class MyGdxGame extends Game {
 		gameCamera = new OrthographicCamera();
 		uiCamera = new OrthographicCamera();
 
-		// Заменяем FitViewport на ExtendViewport для адаптивной верстки
 		gameViewport = new ExtendViewport(
 				GameSettings.SCREEN_WIDTH,
 				GameSettings.SCREEN_HEIGHT,
@@ -40,11 +41,15 @@ public class MyGdxGame extends Game {
 		uiViewport.apply(true);
 
 		GameResources.loadTextures();
+		SkinManager.loadTextures();  // ДОБАВЛЕНО - загрузка текстур скинов
+
+		audioManager = new AudioManager();
 
 		pauseScreen = new PauseScreen(this);
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
 		optionScreen = new OptionScreen(this);
+		skinSelectionScreen = new SkinSelectionScreen(this);  // ДОБАВЛЕНО
 
 		setScreen(menuScreen);
 	}
@@ -62,6 +67,13 @@ public class MyGdxGame extends Game {
 		if (gameScreen != null) {
 			gameScreen.dispose();
 		}
+
+		if (audioManager != null) {
+			if (audioManager.gasMusic != null) audioManager.gasMusic.dispose();
+			if (audioManager.brakeMusic != null) audioManager.brakeMusic.dispose();
+		}
+
+		SkinManager.disposeTextures();  // ДОБАВЛЕНО
 		GameResources.dispose();
 	}
 }
