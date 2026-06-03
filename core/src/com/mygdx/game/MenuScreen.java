@@ -30,6 +30,10 @@ public class MenuScreen implements Screen, InputProcessor {
         buttonQuit = new Button(GameResources.quitButton,0,0,0,0);
         buttonSkins = new Button(GameResources.skinsButton,0,0,0,0);
 
+        if (game.audioManager != null && game.audioManager.backgroundMusic != null && !game.audioManager.backgroundMusic.isPlaying()) {
+            game.audioManager.backgroundMusic.play();
+        }
+
         updateButtons();
 
         Gdx.input.setInputProcessor(this);

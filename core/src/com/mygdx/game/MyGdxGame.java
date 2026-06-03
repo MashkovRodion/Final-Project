@@ -49,6 +49,9 @@ public class MyGdxGame extends Game {
 		SkinManager.loadTextures();  // ДОБАВЛЕНО - загрузка текстур скинов
 
 		audioManager = new AudioManager();
+		if (audioManager.backgroundMusic != null) {
+			audioManager.backgroundMusic.play();
+		}
 
 		pauseScreen = new PauseScreen(this);
 		gameScreen = new GameScreen(this);
@@ -76,6 +79,7 @@ public class MyGdxGame extends Game {
 		if (audioManager != null) {
 			if (audioManager.gasMusic != null) audioManager.gasMusic.dispose();
 			if (audioManager.brakeMusic != null) audioManager.brakeMusic.dispose();
+			if (audioManager.backgroundMusic != null) audioManager.backgroundMusic.dispose();
 		}
 
 		SkinManager.disposeTextures();  // ДОБАВЛЕНО

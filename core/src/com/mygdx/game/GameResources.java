@@ -108,6 +108,7 @@ public class GameResources {
 
     public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
     public static final String BRAKE_MUSIC_PATH = "sounds/brake.mp3";
+    public static final String FON_MUSIC_PATH = "sounds/fon_music.mp3";
 
     public static void dispose() {
 

@@ -7,12 +7,16 @@ public class AudioManager {
     public boolean isMusicOn;
     public Music gasMusic;
     public Music brakeMusic;
+    public Music backgroundMusic;
 
     public AudioManager() {
         gasMusic = Gdx.audio.newMusic(Gdx.files.internal(GameResources.GAS_MUSIC_PATH));
         brakeMusic = Gdx.audio.newMusic(Gdx.files.internal(GameResources.BRAKE_MUSIC_PATH));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(GameResources.FON_MUSIC_PATH));
 
-        isMusicOn = false;
+        isMusicOn = true;
+        backgroundMusic.setVolume(Options.musicVolume);
+        backgroundMusic.setLooping(true);
 
 
         gasMusic.setVolume(Options.soundVolume);

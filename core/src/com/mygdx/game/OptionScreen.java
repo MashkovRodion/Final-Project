@@ -288,11 +288,18 @@ public class OptionScreen implements Screen, InputProcessor {
             activePointerId = pointer;
             Options.musicVolume = Math.min(1f, Options.musicVolume + 0.01f);
 
+            if (game.audioManager != null && game.audioManager.backgroundMusic != null) {
+                game.audioManager.backgroundMusic.setVolume(Options.musicVolume);
+            }
 
             autoRepeatTask = Timer.schedule(new Task() {
                 @Override
                 public void run() {
                     Options.musicVolume = Math.min(1f, Options.musicVolume + 0.01f);
+
+                    if (game.audioManager != null && game.audioManager.backgroundMusic != null) {
+                        game.audioManager.backgroundMusic.setVolume(Options.musicVolume);
+                    }
                 }
             }, 0.4f, 0.03f);
             return true;
@@ -303,10 +310,18 @@ public class OptionScreen implements Screen, InputProcessor {
             activePointerId = pointer;
             Options.musicVolume = Math.max(0f, Options.musicVolume - 0.01f);
 
+
+            if (game.audioManager != null && game.audioManager.backgroundMusic != null) {
+                game.audioManager.backgroundMusic.setVolume(Options.musicVolume);
+            }
+
             autoRepeatTask = Timer.schedule(new Task() {
                 @Override
                 public void run() {
                     Options.musicVolume = Math.max(0f, Options.musicVolume - 0.01f);
+                    if (game.audioManager != null && game.audioManager.backgroundMusic != null) {
+                        game.audioManager.backgroundMusic.setVolume(Options.musicVolume);
+                    }
                 }
             }, 0.4f, 0.03f);
             return true;
