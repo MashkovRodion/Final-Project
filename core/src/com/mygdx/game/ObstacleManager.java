@@ -87,8 +87,8 @@ public class ObstacleManager {
                 break;
 
             case 3:
-                width = 100;
-                height = 100;
+                width = 50;
+                height = 50;
                 break;
 
             default:
