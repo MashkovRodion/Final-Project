@@ -225,16 +225,16 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     startTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
                 }
 
-                if (isWheelPressed && i == wheelPointerId) {
-                    stillHoldingWheel = true;
-                    float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
-                    float angleDelta = currentTouchAngle - startTouchAngle;
-                    steeringWheel.setRotation(startWheelRotation + angleDelta);
-
-                    // ДОБАВЛЕНО - поворот машины при повороте руля
-                    float carRotation = steeringWheel.getRotation() * 0.5f;
-                    carSprite.setRotation(carRotation);
-                }
+//                if (isWheelPressed && i == wheelPointerId) {
+//                    stillHoldingWheel = true;
+//                    float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
+//                    float angleDelta = currentTouchAngle - startTouchAngle;
+//                    steeringWheel.setRotation(startWheelRotation + angleDelta);
+//
+//                    // ДОБАВЛЕНО - поворот машины при повороте руля
+//                    float carRotation = steeringWheel.getRotation() * 0.5f;
+//                    carSprite.setRotation(carRotation);
+//                }
             }
         }
 
@@ -326,6 +326,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         if (rotation < -180f) {
             steeringWheel.setRotation(-180f);
         }
+
+        carSprite.setRotation(steeringWheel.getRotation() * 0.5f);
     }
 
     public void draw(float delta) {
@@ -422,8 +424,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         currentGasTexture = GameResources.gasNormal;
         currentBrakeTexture = GameResources.brakeNormal;
-        isGasPressed = false;
-        isBrakePressed = false;
         steeringWheel.setRotation(0);
         carSprite.setRotation(0);  // ДОБАВЛЕНО
 
@@ -465,7 +465,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-  
+
         if (keycode == Input.Keys.ESCAPE) {
             resetControls();
             game.setScreen(game.pauseScreen);
@@ -496,7 +496,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-      if (keycode == Input.Keys.W) {
+        if (keycode == Input.Keys.W) {
             isGasKeyPressed = false;
             return true;
         }

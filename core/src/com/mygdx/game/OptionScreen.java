@@ -90,6 +90,7 @@ public class OptionScreen implements Screen, InputProcessor {
 
         buttonSoundPlus.update(mouseX, mouseY);
         buttonSoundMinus.update(mouseX, mouseY);
+        buttonBack.update(mouseX, mouseY);
 
 
         game.batch.setProjectionMatrix(game.uiCamera.combined);
@@ -194,7 +195,7 @@ public class OptionScreen implements Screen, InputProcessor {
 
         clearRecordsButton.setPosition(
                 centerX - clearRecordsWidth / 2f,
-                h * 0.445f,
+                h * 0.4f,
                 clearRecordsWidth,
                 clearRecordsHeight
         );
@@ -203,8 +204,8 @@ public class OptionScreen implements Screen, InputProcessor {
         panelWidth = w * 0.42f;
         panelHeight = h * 0.4f;
         panelX = centerX - panelWidth / 2f;
-        panelY = h * 0.245f;
-        buttonY = h * 0.41f;
+        panelY = h * 0.2f;
+        buttonY = h * 0.365f;
 
         // Font
         font.getData().setScale(h * 0.0038f);

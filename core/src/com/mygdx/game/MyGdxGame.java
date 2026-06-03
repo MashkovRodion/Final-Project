@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -25,6 +26,10 @@ public class MyGdxGame extends Game {
 
 	@Override
 	public void create() {
+
+		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+		Options.fullscreen = true;
+
 		batch = new SpriteBatch();
 		gameCamera = new OrthographicCamera();
 		uiCamera = new OrthographicCamera();
