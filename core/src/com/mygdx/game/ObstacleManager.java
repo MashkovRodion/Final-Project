@@ -72,18 +72,18 @@ public class ObstacleManager {
         switch (type) {
 
             case 0:
-                width = 250;
-                height = 175;
+                width = 200;
+                height = 45;
                 break;
 
             case 1:
                 width = 200;
-                height = 120;
+                height = 60;
                 break;
 
             case 2:
-                width = 150;
-                height = 100;
+                width = 70;
+                height = 80;
                 break;
 
             case 3:
@@ -92,8 +92,8 @@ public class ObstacleManager {
                 break;
 
             default:
-                width = 300;
-                height = 200;
+                width = 200;
+                height = 80;
                 break;
         }
 
@@ -123,7 +123,8 @@ public class ObstacleManager {
                         x,
                         y,
                         width,
-                        height
+                        height,
+                        type
                 )
         );
     }
