@@ -16,14 +16,18 @@ public class Obstacle {
 
     private Rectangle bounds;
 
+    private int type;
+
     public Obstacle(
             Texture texture,
             float x,
             float y,
             float width,
-            float height
+            float height,
+            int type
     ) {
         this.texture = texture;
+        this.type = type;
 
         this.x = x;
         this.y = y;
@@ -68,4 +72,8 @@ public class Obstacle {
     public float getY() {
         return y;
     }
+    public int getType() {
+        return type;
+    }
+
 }
