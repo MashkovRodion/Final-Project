@@ -11,6 +11,8 @@ public class Track {
 
     private float offsetY;
 
+    private float finishY = 15000;
+
     public Track(
             Texture texture,
             float width,

@@ -72,6 +72,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private float carMoveSpeed = 500f;
     private float carVerticalSpeed = 300f;
 
+    private float passedDistance = 0;
+
+    private float finishLineY;
+    private boolean finishVisible = false;
+
     private boolean isLeftKeyPressed;
     private boolean isRightKeyPressed;
     private boolean isGasKeyPressed;
@@ -208,11 +213,62 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         handleInput(delta);
         updateSpeed(delta);
         updateCarMovement(delta);
+        passedDistance += currentSpeed * delta * 3f;
+
+        float distanceLeft =
+                GameSettings.FINISH_DISTANCE - passedDistance;
+
+        if (distanceLeft <= 500 && !finishVisible) {
+
+            finishVisible = true;
+
+            finishLineY =
+                    game.gameViewport.getWorldHeight() + 200;
+
+            obstacleManager.clear(); // удалить все препятствия
+        }
 
         checkCollisions();
 
         track.update(currentSpeed * 3f, delta);
-        obstacleManager.update(currentSpeed * 3f, delta);
+        obstacleManager.update(currentSpeed * 3f, delta, passedDistance);
+
+        if (finishVisible) {
+            finishLineY -= currentSpeed * 3f * delta;
+        }
+        if (finishVisible) {
+
+            Rectangle finishRect =
+                    new Rectangle(
+                            roadLeftBound,
+                            finishLineY,
+                            roadRightBound - roadLeftBound,
+                            80
+                    );
+
+            Rectangle carRect =
+                    new Rectangle(
+                            carX,
+                            carY,
+                            carWidth,
+                            carHeight
+                    );
+
+            if (finishRect.overlaps(carRect)) {
+
+                resetControls();
+
+                game.setScreen(
+                        new FinishScreen(
+                                game,
+                                getFormattedTime()
+                        )
+                );
+
+                return;
+            }
+        }
+
 
         draw(delta);
 
@@ -271,10 +327,25 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     break;
                 }
 
-                startNewGame();
+                resetControls();
+                game.setScreen(new GameOverScreen(game, getFormattedTime()));
                 break;
             }
         }
+    }
+
+    private String getFormattedTime() {
+
+        long elapsed = TimeUtils.timeSinceMillis(startTime);
+
+        long mins = elapsed / 60000;
+        long secs = (elapsed % 60000) / 1000;
+        long millis = elapsed % 1000;
+
+        return String.format("%02d:%02d.%03d",
+                mins,
+                secs,
+                millis);
     }
 
     private void handleInput(float delta) {
@@ -397,6 +468,17 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         game.batch.begin();
 
         track.draw(game.batch);
+
+        if (finishVisible) {
+
+            game.batch.draw(
+                    GameResources.finishLine,
+                    roadLeftBound,
+                    finishLineY,
+                    roadRightBound - roadLeftBound,
+                    80
+            );
+        }
         obstacleManager.draw(game.batch);
 
         float worldWidth = game.gameViewport.getWorldWidth();
@@ -419,20 +501,29 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 speedometerY + (speedometerHeight + speedLayout.height) / 2f
         );
 
-        long totalSeconds = TimeUtils.timeSinceMillis(startTime) / 1000;
-        long mins = totalSeconds / 60;
-        long secs = totalSeconds % 60;
-        String strMins = (mins < 10) ? "0" + mins : "" + mins;
-        String strSecs = (secs < 10) ? "0" + secs : "" + secs;
+        long elapsed = TimeUtils.timeSinceMillis(startTime);
 
-        font.draw(game.batch, strMins + ":" + strSecs, worldWidth / 2f - 25, worldHeight - 20);
+        long mins = elapsed / 60000;
+        long secs = (elapsed % 60000) / 1000;
+        long millis = elapsed % 1000;
 
-        float starY = worldHeight - 50;
-        game.batch.draw((totalSeconds >= 60) ? GameResources.star_tusk : GameResources.star, 40, starY, 40, 40);
-        game.batch.draw((totalSeconds >= 40) ? GameResources.star_tusk : GameResources.star, 90, starY, 40, 40);
-        game.batch.draw((totalSeconds >= 20) ? GameResources.star_tusk : GameResources.star, 140, starY, 40, 40);
-        pauseButton.draw(game.batch);
-        game.batch.end();
+        String timerText = String.format("%02d:%02d.%03d", mins, secs, millis);
+
+        font.draw(
+                game.batch,
+                timerText,
+                worldWidth / 2f - 60,
+                worldHeight - 20
+        );
+//        long totalSeconds = elapsed / 1000;
+
+
+//        float starY = worldHeight - 50;
+//        game.batch.draw((totalSeconds >= 60) ? GameResources.star_tusk : GameResources.star, 40, starY, 40, 40);
+//        game.batch.draw((totalSeconds >= 40) ? GameResources.star_tusk : GameResources.star, 90, starY, 40, 40);
+//        game.batch.draw((totalSeconds >= 20) ? GameResources.star_tusk : GameResources.star, 140, starY, 40, 40);
+//        pauseButton.draw(game.batch);
+          game.batch.end();
     }
 
     private void updateLayout() {
@@ -454,6 +545,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     public void startNewGame() {
         startTime = TimeUtils.millis();
         currentSpeed = 0;
+        passedDistance = 0;
+        finishVisible = false;
+        finishLineY = 0;
 
         float roadCenter = (roadLeftBound + roadRightBound - carWidth) / 2f;
         carX = MathUtils.clamp(roadCenter, roadLeftBound, roadRightBound - carWidth);
@@ -475,6 +569,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         isGasPressed = false;
         isBrakePressed = false;
         isWheelPressed = false;
+        isGasKeyPressed = false;
+        isBrakeKeyPressed = false;
+
+        isLeftKeyPressed = false;
+        isRightKeyPressed = false;
         wheelPointerId = -1;
 
         currentGasTexture = GameResources.gasNormal;
@@ -571,6 +670,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override

@@ -22,6 +22,7 @@ public class MyGdxGame extends Game {
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public OptionScreen optionScreen;
+	public GameOverScreen gameOverScreen;
 	public SkinSelectionScreen skinSelectionScreen;  // ДОБАВЛЕНО
 
 	@Override

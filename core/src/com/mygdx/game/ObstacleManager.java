@@ -30,11 +30,14 @@ public class ObstacleManager {
         distanceSinceSpawn = 0;
     }
 
-    public void update(float speed, float delta) {
+    public void update(
+            float speed,
+            float delta,
+            float passedDistance
+    ) {
 
         distanceSinceSpawn += speed * delta;
 
-        // обновляем препятствия
         for (int i = obstacles.size - 1; i >= 0; i--) {
 
             Obstacle obstacle = obstacles.get(i);
@@ -46,7 +49,13 @@ public class ObstacleManager {
             }
         }
 
-        // спавн нового препятствия
+        float distanceToFinish =
+                GameSettings.FINISH_DISTANCE - passedDistance;
+
+        if (distanceToFinish <= 1500f) {
+            return;
+        }
+
         if (distanceSinceSpawn >= 300f) {
 
             spawnRandomObstacle();
