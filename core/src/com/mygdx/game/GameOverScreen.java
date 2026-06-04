@@ -103,7 +103,7 @@ public class GameOverScreen extends ScreenAdapter {
         game.batch.begin();
 
         GlyphLayout loseText =
-                new GlyphLayout(font, "You are lose");
+                new GlyphLayout(font, "You lost");
 
         float centerX =
                 game.gameViewport.getWorldWidth() / 2f;
