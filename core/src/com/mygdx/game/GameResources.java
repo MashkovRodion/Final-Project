@@ -50,6 +50,7 @@ public class GameResources {
     public static Texture checkmark;
     public static Texture  clearRecords;
     public static Texture finishLine;
+    public static Texture leaderboardButton;
 
 
     public static void loadTextures() {
@@ -108,6 +109,7 @@ public class GameResources {
         clearRecords = new Texture("ClearRecords.png/");
 
         finishLine = new Texture("finish_line.png");
+        leaderboardButton = new Texture("leaderboard.png");
     }
 
     public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";

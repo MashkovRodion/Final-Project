@@ -222,8 +222,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
             finishVisible = true;
 
-            finishLineY =
-                    game.gameViewport.getWorldHeight() + 200;
+            finishLineY = game.gameViewport.getWorldHeight() + 200;
 
             obstacleManager.clear(); // удалить все препятствия
         }
@@ -255,6 +254,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     );
 
             if (finishRect.overlaps(carRect)) {
+
+                long finishTime =
+                        TimeUtils.timeSinceMillis(startTime);
+
+                LeaderboardManager.addTime(finishTime);
 
                 resetControls();
 
