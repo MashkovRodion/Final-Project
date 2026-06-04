@@ -17,6 +17,8 @@ public class GameSettings {
     //public static final int RAM_SPEED_X = 915;
     //public static final int RAM_SPEED_Y = 190;
 
+    public static final float FINISH_DISTANCE = 10000f;
+
     public static final int WHEEL_SIZE = 230;       // Размер руля
     public static final float PADDING_X = 0f;      // Безопасный отступ от левого края для руля
     public static final float PADDING_Y = 0f;
