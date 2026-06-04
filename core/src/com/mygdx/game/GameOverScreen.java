@@ -36,18 +36,12 @@ public class GameOverScreen extends ScreenAdapter {
 
         restartButton = new Button(
                 GameResources.restartButton,
-                300,
-                170,
-                280,
-                150
+                0, 0, 0, 0
         );
 
         menuButton = new Button(
                 GameResources.menuPauseButton,
-                300,
-                60,
-                280,
-                150
+                0, 0, 0, 0
         );
     }
 
@@ -65,6 +59,30 @@ public class GameOverScreen extends ScreenAdapter {
         );
 
         game.gameViewport.unproject(touchPos);
+
+        float worldWidth = game.gameViewport.getWorldWidth();
+        float worldHeight = game.gameViewport.getWorldHeight();
+
+        float buttonWidth = 280f;
+        float buttonHeight = 150f;
+        float centerX = worldWidth / 2f - buttonWidth / 2f;
+
+        float restartButtonY = worldHeight * 0.30f;
+        float menuButtonY = worldHeight * 0.12f;
+
+        restartButton.setPosition(
+                centerX,
+                restartButtonY,
+                buttonWidth,
+                buttonHeight
+        );
+
+        menuButton.setPosition(
+                centerX,
+                menuButtonY,
+                buttonWidth,
+                buttonHeight
+        );
 
         restartButton.update(touchPos.x, touchPos.y);
         menuButton.update(touchPos.x, touchPos.y);
@@ -102,17 +120,15 @@ public class GameOverScreen extends ScreenAdapter {
 
         game.batch.begin();
 
-        GlyphLayout loseText =
-                new GlyphLayout(font, "You lost");
-
-        float centerX =
-                game.gameViewport.getWorldWidth() / 2f;
+        GlyphLayout loseText = new GlyphLayout(font, "You lost");
+        float textCenterX = worldWidth / 2f - loseText.width / 2f;
+        float textY = restartButtonY + buttonHeight + 40;
 
         font.draw(
                 game.batch,
                 loseText,
-                centerX - loseText.width / 2 + 10,
-                400
+                textCenterX,
+                textY
         );
 
         restartButton.draw(game.batch);

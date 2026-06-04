@@ -32,8 +32,7 @@ public class FinishScreen extends ScreenAdapter implements InputProcessor {
         Gdx.input.setInputProcessor(this);
         font = new BitmapFont();
         font.getData().setScale(3f);
-        System.out.println(game.gameViewport.getWorldWidth());
-        System.out.println(game.gameViewport.getWorldHeight());
+
         restartButton = new Button(
                 GameResources.restartButton,
                 0, 0, 0, 0
@@ -42,23 +41,6 @@ public class FinishScreen extends ScreenAdapter implements InputProcessor {
         menuButton = new Button(
                 GameResources.menuPauseButton,
                 0, 0, 0, 0
-        );
-
-        float w = game.gameViewport.getWorldWidth();
-        float h = game.gameViewport.getWorldHeight();
-
-        restartButton.setPosition(
-                w * 0.36f,
-                h * 0.35f,
-                250,
-                150
-        );
-
-        menuButton.setPosition(
-                w * 0.36f,
-                h * 0.2f,
-                250,
-                150
         );
     }
 
@@ -82,13 +64,31 @@ public class FinishScreen extends ScreenAdapter implements InputProcessor {
 
         game.gameViewport.unproject(mousePos);
 
+        float w = game.gameViewport.getWorldWidth();
+        float h = game.gameViewport.getWorldHeight();
+
+        float buttonWidth = 250f;
+        float buttonHeight = 150f;
+        float centerX = w / 2f - buttonWidth / 2f;
+
+        restartButton.setPosition(
+                centerX,
+                h * 0.35f,
+                buttonWidth,
+                buttonHeight
+        );
+
+        menuButton.setPosition(
+                centerX,
+                h * 0.15f,
+                buttonWidth,
+                buttonHeight
+        );
+
         restartButton.update(mousePos.x, mousePos.y);
         menuButton.update(mousePos.x, mousePos.y);
 
         game.batch.begin();
-
-        float w = game.gameViewport.getWorldWidth();
-        float h = game.gameViewport.getWorldHeight();
 
         font.draw(game.batch,
                 "FINISH!",

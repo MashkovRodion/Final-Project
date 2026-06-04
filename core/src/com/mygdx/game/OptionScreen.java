@@ -31,8 +31,6 @@ public class OptionScreen implements Screen, InputProcessor {
     private int oldWindowWidth = 1280;
     private int oldWindowHeight = 720;
 
-    // ===== PANEL DATA =====
-
     private float panelX;
     private float buttonY;
     private float panelY;
@@ -41,8 +39,6 @@ public class OptionScreen implements Screen, InputProcessor {
 
     private final GlyphLayout volumeLayout = new GlyphLayout();
     private final GlyphLayout soundLayout = new GlyphLayout();
-
-    // ===== ТАЙМЕРЫ ДЛЯ УДЕРЖАНИЯ КНОПОК =====
     private Task autoRepeatTask;
     private int activePointerId = -1;
 
@@ -102,8 +98,6 @@ public class OptionScreen implements Screen, InputProcessor {
 
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
-
-        // ===== BACKGROUND =====
         game.batch.draw(
                 GameResources.menu_bg,
                 0,
@@ -111,15 +105,11 @@ public class OptionScreen implements Screen, InputProcessor {
                 w,
                 h
         );
-
-        // ===== FULLSCREEN BUTTON TEXTURE =====
         if (Gdx.graphics.isFullscreen()) {
             fullscreenButton.setTexture(GameResources.fullscreenOn);
         } else {
             fullscreenButton.setTexture(GameResources.fullscreenOff);
         }
-
-        // ===== VOLUME PANEL (MUSIC) =====
         game.batch.draw(
                 GameResources.musicPanel,
                 panelX,
@@ -127,8 +117,6 @@ public class OptionScreen implements Screen, InputProcessor {
                 panelWidth,
                 panelHeight
         );
-
-        // ===== VOLUME TEXT (MUSIC) =====
         String volumeText = "" + (int)(Options.musicVolume * 100);
         volumeLayout.setText(font, volumeText);
 
@@ -141,8 +129,6 @@ public class OptionScreen implements Screen, InputProcessor {
                 panelX + (panelWidth - volumeLayout.width) / 2f + textOffsetX,
                 panelY + panelHeight / 2f + volumeLayout.height / 2f + textOffsetY
         );
-
-        // ===== VOLUME PANEL (SOUNDS) =====
         game.batch.draw(
                 GameResources.sfxPanel,
                 panelX,
@@ -150,8 +136,6 @@ public class OptionScreen implements Screen, InputProcessor {
                 panelWidth,
                 panelHeight
         );
-
-        // ===== VOLUME TEXT (SOUNDS) =====
         String soundText = "" + (int)(Options.soundVolume * 100);
         soundLayout.setText(font, soundText);
 
@@ -161,8 +145,6 @@ public class OptionScreen implements Screen, InputProcessor {
                 panelX + (panelWidth - soundLayout.width) / 2f + textOffsetX,
                 (panelY - 200f) + panelHeight / 2f + soundLayout.height / 2f + textOffsetY
         );
-
-        // ===== BUTTONS =====
         fullscreenButton.draw(game.batch);
 
         buttonMusicMinus.draw(game.batch);
@@ -183,8 +165,6 @@ public class OptionScreen implements Screen, InputProcessor {
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
         float centerX = w / 2f;
-
-        // FULLSCREEN BUTTON
         float fullscreenWidth = w * 0.45f;
         float fullscreenHeight = h * 0.4f;
 
@@ -211,55 +191,40 @@ public class OptionScreen implements Screen, InputProcessor {
                 clearRecordsHeight - 100
         );
 
-
-        // VOLUME PANEL
         panelWidth = w * 0.42f;
         panelHeight = h * 0.4f;
         panelX = centerX - panelWidth / 2f;
         panelY = h * 0.2f;
         buttonY = h * 0.365f;
 
-        // Font
         font.getData().setScale(h * 0.0038f);
 
-        // PLUS / MINUS BUTTONS
         float buttonSize = h * 0.1f;
         float spacing = w * 0.025f;
-
-        // MINUS (MUSIC)
         buttonMusicMinus.setPosition(
                 panelX - buttonSize - spacing,
                 buttonY,
                 buttonSize,
                 buttonSize
         );
-
-        // PLUS (MUSIC)
         buttonMusicPlus.setPosition(
                 panelX + panelWidth + spacing,
                 buttonY,
                 buttonSize,
                 buttonSize
         );
-
-        // MINUS (SOUNDS)
         buttonSoundMinus.setPosition(
                 panelX - buttonSize - spacing,
                 buttonY - 200f,
                 buttonSize,
                 buttonSize
         );
-
-        // PLUS (SOUNDS)
         buttonSoundPlus.setPosition(
                 panelX + panelWidth + spacing,
                 buttonY - 200f,
                 buttonSize,
                 buttonSize
         );
-
-
-        // BACK BUTTON
         float backWidth = w * 0.4f;
         float backHeight = h * 0.4f;
 
@@ -288,8 +253,6 @@ public class OptionScreen implements Screen, InputProcessor {
             applyFullscreenToggle();
             return true;
         }
-
-        // ===== CLEAR RECORDS =====
         if (clearRecordsButton.isTapped(x, y)) {
 
             LeaderboardManager.clear();
@@ -304,8 +267,6 @@ public class OptionScreen implements Screen, InputProcessor {
 
             return true;
         }
-
-        // ===== MUSIC PLUS =====
         if (buttonMusicPlus.isTapped(x, y)) {
             activePointerId = pointer;
             Options.musicVolume = Math.min(1f, Options.musicVolume + 0.01f);
@@ -326,8 +287,6 @@ public class OptionScreen implements Screen, InputProcessor {
             }, 0.4f, 0.03f);
             return true;
         }
-
-        // ===== MUSIC MINUS =====
         if (buttonMusicMinus.isTapped(x, y)) {
             activePointerId = pointer;
             Options.musicVolume = Math.max(0f, Options.musicVolume - 0.01f);
@@ -348,8 +307,6 @@ public class OptionScreen implements Screen, InputProcessor {
             }, 0.4f, 0.03f);
             return true;
         }
-
-        // ===== SOUND PLUS =====
         if (buttonSoundPlus.isTapped(x, y)) {
             activePointerId = pointer;
             Options.soundVolume = Math.min(1f, Options.soundVolume + 0.01f);
@@ -364,8 +321,6 @@ public class OptionScreen implements Screen, InputProcessor {
             }, 0.4f, 0.03f);
             return true;
         }
-
-        // ===== SOUND MINUS =====
         if (buttonSoundMinus.isTapped(x, y)) {
             activePointerId = pointer;
             Options.soundVolume = Math.max(0f, Options.soundVolume - 0.01f);
@@ -380,8 +335,6 @@ public class OptionScreen implements Screen, InputProcessor {
             }, 0.4f, 0.03f);
             return true;
         }
-
-        // ===== BACK =====
         if (buttonBack.isTapped(x, y)) {
             game.setScreen(game.menuScreen);
             return true;

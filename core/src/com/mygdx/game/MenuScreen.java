@@ -43,8 +43,6 @@ public class MenuScreen implements Screen, InputProcessor {
 
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
-
-        // Большие кнопки (START, OPTIONS, QUIT)
         float bw = w * 0.45f;
         float bh = h * 0.4f;
         float cx = w / 2f - bw / 2f;
@@ -53,12 +51,10 @@ public class MenuScreen implements Screen, InputProcessor {
         buttonOptions.setPosition(cx, h * 0.25f, bw, bh);
         buttonQuit.setPosition(cx, h * 0.01f, bw, bh);
 
-        // Кнопка скинов - больше по высоте и левее
-        float skinsHeight = h * 0.12f;      // Увеличено с 0.08 до 0.12
-        float skinsWidth = h * 0.2f;        // Увеличено с 0.15 до 0.2
-        float margin = h * 0.015f;          // Уменьшен отступ, чтобы была левее
+        float skinsHeight = h * 0.12f;
+        float skinsWidth = h * 0.2f;
+        float margin = h * 0.015f;
 
-        // Располагаем кнопку скинов справа от OPTIONS, но с меньшим отступом
         float optionsRight = cx + bw;
         float skinsX = optionsRight + margin;
         float skinsY = h * 0.27f + (bh - skinsHeight) / 2f;

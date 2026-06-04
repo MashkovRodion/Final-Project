@@ -25,7 +25,7 @@ public class MyGdxGame extends Game {
 	public GameOverScreen gameOverScreen;
 
 	public LeaderboardScreen leaderboardScreen;
-	public SkinSelectionScreen skinSelectionScreen;  // ДОБАВЛЕНО
+	public SkinSelectionScreen skinSelectionScreen;
 
 	@Override
 	public void create() {
@@ -49,7 +49,7 @@ public class MyGdxGame extends Game {
 		uiViewport.apply(true);
 
 		GameResources.loadTextures();
-		SkinManager.loadTextures();  // ДОБАВЛЕНО - загрузка текстур скинов
+		SkinManager.loadTextures();
 
 		audioManager = new AudioManager();
 		if (audioManager.backgroundMusic != null) {
@@ -86,7 +86,7 @@ public class MyGdxGame extends Game {
 			if (audioManager.backgroundMusic != null) audioManager.backgroundMusic.dispose();
 		}
 
-		SkinManager.disposeTextures();  // ДОБАВЛЕНО
+		SkinManager.disposeTextures();
 		GameResources.dispose();
 	}
 }

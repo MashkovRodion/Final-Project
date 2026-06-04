@@ -26,7 +26,6 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
     private boolean isDragging = false;
     private float lastTouchY;
 
-    // Класс для кнопки скина
     private class SkinButton {
         Button button;
         SkinManager.CarSkin skin;
@@ -55,7 +54,6 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
 
         void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch batch) {
             button.draw(batch);
-            // Рисуем рамку если скин выбран
             if (skin == SkinManager.getCurrentSkin()) {
                 float borderWidth = 5f;
                 batch.draw(GameResources.checkmark,
@@ -91,7 +89,6 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
 
         font.getData().setScale(h * 0.004f);
 
-        // Кнопка BACK - еще ниже
         float backWidth = w * 0.35f;
         float backHeight = h * 0.35f;
         backButton.setPosition(
@@ -110,7 +107,6 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
         float centerX = w / 2f;
         float startY = h * 0.55f;
 
-        // Пересчет максимального скролла
         int rows = (int) Math.ceil(skins.length / 2.0);
         float totalHeight = rows * (carButtonSize + spacing);
         maxScroll = Math.max(0, totalHeight - (h * 0.5f));
@@ -119,21 +115,16 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
             int row = i / 2;
             int col = i % 2;
 
-            // Определяем смещение в зависимости от названия машины
             float horizontalOffset = 0;
             String skinName = skins[i].getDisplayName();
 
-            // Базовая позиция
             float baseX;
             if (col == 0) {
-                // Левая колонка
                 baseX = centerX - carButtonSize - spacing/2;
             } else {
-                // Правая колонка
                 baseX = centerX + spacing/2;
             }
 
-            // Применяем смещение
             float x = baseX + horizontalOffset;
             float y = startY - row * (carButtonSize + spacing) + scrollOffset;
 
@@ -167,15 +158,11 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
         game.batch.setProjectionMatrix(game.uiCamera.combined);
         game.batch.begin();
 
-        // Background
         game.batch.draw(background, 0, 0, w, h);
 
-        // Draw skin buttons
         for (SkinButton skinBtn : skinButtons) {
-            // Проверяем видимость кнопки
             if (skinBtn.y + skinBtn.height > h * 0.05f && skinBtn.y < h * 0.88f) {
                 skinBtn.draw(game.batch);
-                // Draw skin name
                 String name = skinBtn.skin.getDisplayName();
                 GlyphLayout nameLayout = new GlyphLayout(font, name);
                 float nameY = skinBtn.y - 15;

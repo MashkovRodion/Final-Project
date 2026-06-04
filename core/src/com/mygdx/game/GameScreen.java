@@ -82,7 +82,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private boolean isGasKeyPressed;
     private boolean isBrakeKeyPressed;
 
-    // Для бесконечного вращения руля
     private float wheelRotation = 0f;
 
     public GameScreen(MyGdxGame game) {
@@ -146,11 +145,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float worldWidth = game.gameViewport.getWorldWidth();
         float worldHeight = game.gameViewport.getWorldHeight();
 
-        // Границы трассы (X)
         roadLeftBound = worldWidth * 0.198f;
         roadRightBound = worldWidth * 0.8f;
 
-        // Границы трассы (Y) - машина может двигаться по вертикали
         roadBottomBound = worldHeight * 0.05f;
         roadTopBound = worldHeight * 0.75f;
 
@@ -194,7 +191,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         carWidth = worldHeight * 0.1f;
         carHeight = worldHeight * 0.18f;
 
-        // Начальная позиция по центру дороги и внизу экрана
         float roadCenter = (roadLeftBound + roadRightBound - carWidth) / 2f;
         carX = MathUtils.clamp(roadCenter, roadLeftBound, roadRightBound - carWidth);
         carY = roadBottomBound;
@@ -224,7 +220,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
             finishLineY = game.gameViewport.getWorldHeight() + 200;
 
-            obstacleManager.clear(); // удалить все препятствия
+            obstacleManager.clear();
         }
 
         checkCollisions();
@@ -284,8 +280,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private void updateCarMovement(float delta) {
 
         float steerFactor = wheelRotation / 180f;
-
-        // движение в стороны зависит от скорости
         carX -= steerFactor * currentSpeed * 5f * delta;
 
         carX = MathUtils.clamp(
@@ -310,7 +304,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         carSprite.setPosition(carX, carY);
 
-        // машина поворачивается слабее руля
         carSprite.setRotation(wheelRotation * 0.4f);
     }
 
@@ -322,11 +315,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         for (Obstacle obstacle : obstacleManager.getObstacles()) {
 
             if (obstacle.getBounds().overlaps(carBounds)) {
-
-                // barrier5
                 if (obstacle.getType() == 4) {
 
-                    currentSpeed *= 0.9f; // потерять 50% скорости
+                    currentSpeed *= 0.9f;
 
                     break;
                 }
@@ -377,7 +368,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
                     float angleDelta = currentTouchAngle - startTouchAngle;
                     wheelRotation = startWheelRotation + angleDelta;
-                    // Ограничиваем угол поворота руля (опционально)
                     wheelRotation = MathUtils.clamp(wheelRotation, -180f, 180f);
                     steeringWheel.setRotation(wheelRotation);
                     carSprite.setRotation(wheelRotation);
@@ -389,8 +379,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             isWheelPressed = false;
             wheelPointerId = -1;
         }
-
-        // Автовозврат руля
         if (!isWheelPressed && !isLeftKeyPressed && !isRightKeyPressed) {
             float returnSpeed = 300f * delta;
 
@@ -526,7 +514,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 //        game.batch.draw((totalSeconds >= 60) ? GameResources.star_tusk : GameResources.star, 40, starY, 40, 40);
 //        game.batch.draw((totalSeconds >= 40) ? GameResources.star_tusk : GameResources.star, 90, starY, 40, 40);
 //        game.batch.draw((totalSeconds >= 20) ? GameResources.star_tusk : GameResources.star, 140, starY, 40, 40);
-//        pauseButton.draw(game.batch);
+        pauseButton.draw(game.batch);
           game.batch.end();
     }
 
