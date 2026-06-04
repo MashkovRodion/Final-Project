@@ -23,6 +23,8 @@ public class MyGdxGame extends Game {
 	public MenuScreen menuScreen;
 	public OptionScreen optionScreen;
 	public GameOverScreen gameOverScreen;
+
+	public LeaderboardScreen leaderboardScreen;
 	public SkinSelectionScreen skinSelectionScreen;  // ДОБАВЛЕНО
 
 	@Override
@@ -58,7 +60,8 @@ public class MyGdxGame extends Game {
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
 		optionScreen = new OptionScreen(this);
-		skinSelectionScreen = new SkinSelectionScreen(this);  // ДОБАВЛЕНО
+		skinSelectionScreen = new SkinSelectionScreen(this);
+		leaderboardScreen = new LeaderboardScreen(this);
 
 		setScreen(menuScreen);
 	}
