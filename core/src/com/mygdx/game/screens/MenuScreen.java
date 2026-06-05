@@ -1,9 +1,13 @@
-package com.mygdx.game;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.ui.Button;
+
+import com.mygdx.game.core.GameResources;
+import com.mygdx.game.core.MyGdxGame;
 
 public class MenuScreen implements Screen, InputProcessor {
 

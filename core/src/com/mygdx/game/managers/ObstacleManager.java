@@ -1,9 +1,13 @@
-package com.mygdx.game;
+package com.mygdx.game.managers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.utils.GameSettings;
+import com.mygdx.game.entities.Obstacle;
+
+import com.mygdx.game.core.GameResources;
 
 public class ObstacleManager {
 

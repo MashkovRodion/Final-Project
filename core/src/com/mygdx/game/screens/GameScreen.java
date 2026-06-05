@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -13,6 +13,17 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.Input;
+import com.mygdx.game.ui.Button;
+import com.mygdx.game.utils.GameSettings;
+import com.mygdx.game.managers.LeaderboardManager;
+import com.mygdx.game.entities.Obstacle;
+import com.mygdx.game.managers.ObstacleManager;
+import com.mygdx.game.options.Options;
+import com.mygdx.game.managers.SkinManager;
+import com.mygdx.game.entities.Track;
+
+import com.mygdx.game.core.GameResources;
+import com.mygdx.game.core.MyGdxGame;
 
 public class GameScreen extends ScreenAdapter implements InputProcessor {
 

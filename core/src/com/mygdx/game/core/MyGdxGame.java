@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.core;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -7,6 +7,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.managers.AudioManager;
+import com.mygdx.game.screens.GameOverScreen;
+import com.mygdx.game.screens.GameScreen;
+import com.mygdx.game.utils.GameSettings;
+import com.mygdx.game.screens.LeaderboardScreen;
+import com.mygdx.game.screens.MenuScreen;
+import com.mygdx.game.screens.OptionScreen;
+import com.mygdx.game.options.Options;
+import com.mygdx.game.screens.PauseScreen;
+import com.mygdx.game.managers.SkinManager;
+import com.mygdx.game.skins.SkinSelectionScreen;
 
 public class MyGdxGame extends Game {
 

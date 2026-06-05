@@ -1,7 +1,10 @@
-package com.mygdx.game;
+package com.mygdx.game.managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.mygdx.game.options.Options;
+
+import com.mygdx.game.core.GameResources;
 
 public class AudioManager {
     public boolean isMusicOn;

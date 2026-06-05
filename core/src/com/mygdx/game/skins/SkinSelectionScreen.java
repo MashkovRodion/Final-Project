@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.skins;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -8,6 +8,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector3;
+
+import com.mygdx.game.core.GameResources;
+import com.mygdx.game.core.MyGdxGame;
+import com.mygdx.game.managers.SkinManager;
+
+import com.mygdx.game.ui.Button;
 
 public class SkinSelectionScreen implements Screen, InputProcessor {
 

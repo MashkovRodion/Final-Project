@@ -1,12 +1,15 @@
-package com.mygdx.game;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.ui.Button;
+
+import com.mygdx.game.core.GameResources;
+import com.mygdx.game.core.MyGdxGame;
 
 public class FinishScreen extends ScreenAdapter implements InputProcessor {
 

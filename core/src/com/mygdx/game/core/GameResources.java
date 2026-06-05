@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.core;
 
 import com.badlogic.gdx.graphics.Texture;
 
@@ -48,68 +48,68 @@ public class GameResources {
 
     public static Texture skinsButton;
     public static Texture checkmark;
-    public static Texture  clearRecords;
+    public static Texture clearRecords;
     public static Texture finishLine;
     public static Texture leaderboardButton;
 
 
     public static void loadTextures() {
 
-        gasNormal = new Texture("gas and brake/gas_normal.png");
-        gasPressed = new Texture("gas and brake/gas_pressed.png");
+        gasNormal = new Texture("gas_and_brake/gas_normal.png");
+        gasPressed = new Texture("gas_and_brake/gas_pressed.png");
 
-        brakeNormal = new Texture("gas and brake/brake_normal.png");
-        brakePressed = new Texture("gas and brake/brake_pressed.png");
+        brakeNormal = new Texture("gas_and_brake/brake_normal.png");
+        brakePressed = new Texture("gas_and_brake/brake_pressed.png");
 
-        ramSpeed = new Texture("ram.speed.png");
+        ramSpeed = new Texture("objects/ram.speed.png");
 
         star = new Texture("stars/star.png");
         star_tusk = new Texture("stars/star_tusk.png");
 
 
-        menu_bg = new Texture("menu_bg.png");
+        menu_bg = new Texture("backgrounds/menu_bg.png");
 
-        startButton = new Texture("NEW_GAME.png");
+        startButton = new Texture("buttons/NEW_GAME.png");
 
-        optionsButton = new Texture("OPTIONS.png");
+        optionsButton = new Texture("buttons/OPTIONS.png");
 
-        quitButton = new Texture("QUIT_GAME.png");
+        quitButton = new Texture("buttons/QUIT_GAME.png");
 
-        backButton = new Texture("BACK.png");
+        backButton = new Texture("buttons/BACK.png");
 
-        plusButton = new Texture("PLUS.png");
+        plusButton = new Texture("buttons/PLUS.png");
 
-        minusButton = new Texture("MINUS.png");
+        minusButton = new Texture("buttons/MINUS.png");
 
-        fullscreenOn = new Texture("FULLSCREEN_ON.png");
+        fullscreenOn = new Texture("buttons/FULLSCREEN_ON.png");
 
-        fullscreenOff = new Texture("FULLSCREEN_OFF.png");
+        fullscreenOff = new Texture("buttons/FULLSCREEN_OFF.png");
 
-        musicPanel = new Texture("music.png");
-        sfxPanel = new Texture("SFX.png");
+        musicPanel = new Texture("buttons/music.png");
+        sfxPanel = new Texture("buttons/SFX.png");
 
-        wheelTexture = new Texture("wheel.png");
+        wheelTexture = new Texture("objects/wheel.png");
 
-        skinsButton = new Texture("skins.png");
+        skinsButton = new Texture("buttons/skins.png");
 
-        pauseButton = new Texture("Pause.png");
+        pauseButton = new Texture("buttons/Pause.png");
 
-        continueButton = new Texture("Continue.png");
-        restartButton = new Texture("Restart.png");
-        menuPauseButton = new Texture("Menu.png");
+        continueButton = new Texture("buttons/Continue.png");
+        restartButton = new Texture("buttons/Restart.png");
+        menuPauseButton = new Texture("buttons/Menu.png");
 
-        trackTexture = new Texture("track.png");
-        barrier1 = new Texture("barier1.png");
-        barrier2 = new Texture("barier2.png");
-        barrier3 = new Texture("barier3.png");
-        barrier4 = new Texture("barier4.png");
-        barrier5 = new Texture("barier5.png");
+        trackTexture = new Texture("backgrounds/track.png");
+        barrier1 = new Texture("barriers/barier1.png");
+        barrier2 = new Texture("barriers/barier2.png");
+        barrier3 = new Texture("barriers/barier3.png");
+        barrier4 = new Texture("barriers/barier4.png");
+        barrier5 = new Texture("barriers/barier5.png");
 
         checkmark = new Texture("stars/checkmark.png");
-        clearRecords = new Texture("ClearRecords.png/");
+        clearRecords = new Texture("buttons/ClearRecords.png");
 
-        finishLine = new Texture("finish_line.png");
-        leaderboardButton = new Texture("leaderboard.png");
+        finishLine = new Texture("objects/finish_line.png");
+        leaderboardButton = new Texture("buttons/leaderboard.png");
     }
 
     public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
@@ -164,5 +164,6 @@ public class GameResources {
         if (checkmark != null) checkmark.dispose();
         if (clearRecords != null) clearRecords.dispose();
         if (finishLine != null) finishLine.dispose();
+        if (leaderboardButton != null) leaderboardButton.dispose();
     }
 }
