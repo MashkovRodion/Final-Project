@@ -1,3 +1,4 @@
+
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -82,6 +83,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private float roadTopBound;
     private float carMoveSpeed = 500f;
     private float carVerticalSpeed = 300f;
+
+    private int durability = 3;
 
     private float passedDistance = 0;
 
@@ -326,15 +329,31 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         for (Obstacle obstacle : obstacleManager.getObstacles()) {
 
             if (obstacle.getBounds().overlaps(carBounds)) {
+
                 if (obstacle.getType() == 4) {
 
                     currentSpeed *= 0.9f;
-
                     break;
                 }
 
-                resetControls();
-                game.setScreen(new GameOverScreen(game, getFormattedTime()));
+                durability--;
+
+                obstacleManager.removeObstacle(obstacle);
+
+                currentSpeed *= 0.5f;
+
+                if (durability <= 0) {
+
+                    resetControls();
+
+                    game.setScreen(
+                            new GameOverScreen(
+                                    game,
+                                    getFormattedTime()
+                            )
+                    );
+                }
+
                 break;
             }
         }
@@ -443,7 +462,23 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     private void updateSpeed(float delta) {
         if (isGasPressed && !isBrakePressed) {
-            currentSpeed += acceleration * delta;
+            float accelerationMultiplier;
+
+            switch (durability) {
+                case 3:
+                    accelerationMultiplier = 1.0f;
+                    break;
+                case 2:
+                    accelerationMultiplier = 0.7f;
+                    break;
+                case 1:
+                    accelerationMultiplier = 0.4f;
+                    break;
+                default:
+                    accelerationMultiplier = 0.0f;
+            }
+
+            currentSpeed += acceleration * accelerationMultiplier * delta;
             if (currentSpeed > maxSpeed) {
                 currentSpeed = maxSpeed;
             }
@@ -494,6 +529,31 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         steeringWheel.draw(game.batch);
         carSprite.draw(game.batch);
 
+        float hpX = 20;
+        float hpY = game.gameViewport.getWorldHeight() - 60;
+
+        float hpSize = 60;
+        float hpSpacing = 50;
+
+        for (int i = 0; i < 3; i++) {
+
+            Texture texture;
+
+            if (i < durability) {
+                texture = GameResources.durabilityFull;
+            } else {
+                texture = GameResources.durabilityBroken;
+            }
+
+            game.batch.draw(
+                    texture,
+                    hpX + i * hpSpacing,
+                    hpY,
+                    hpSize,
+                    hpSize
+            );
+        }
+
         String speedText = String.valueOf((int) currentSpeed);
         speedLayout.setText(font, speedText);
 
@@ -526,7 +586,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 //        game.batch.draw((totalSeconds >= 40) ? GameResources.star_tusk : GameResources.star, 90, starY, 40, 40);
 //        game.batch.draw((totalSeconds >= 20) ? GameResources.star_tusk : GameResources.star, 140, starY, 40, 40);
         pauseButton.draw(game.batch);
-          game.batch.end();
+        game.batch.end();
     }
 
     private void updateLayout() {
@@ -551,6 +611,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         passedDistance = 0;
         finishVisible = false;
         finishLineY = 0;
+        durability = 3;
 
         float roadCenter = (roadLeftBound + roadRightBound - carWidth) / 2f;
         carX = MathUtils.clamp(roadCenter, roadLeftBound, roadRightBound - carWidth);
