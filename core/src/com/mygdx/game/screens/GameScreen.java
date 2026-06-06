@@ -1,4 +1,3 @@
-
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.Input;
 import com.mygdx.game.ui.Button;
+import com.mygdx.game.utils.GameSession;
 import com.mygdx.game.utils.GameSettings;
 import com.mygdx.game.managers.LeaderboardManager;
 import com.mygdx.game.entities.Obstacle;
@@ -25,6 +25,7 @@ import com.mygdx.game.entities.Track;
 
 import com.mygdx.game.core.GameResources;
 import com.mygdx.game.core.MyGdxGame;
+import com.mygdx.game.utils.GameState;
 
 public class GameScreen extends ScreenAdapter implements InputProcessor {
 
@@ -47,6 +48,12 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private long startTime;
 
     private Button pauseButton;
+
+    // Компоненты UI меню паузы, перенесенные из PauseScreen
+    private final Button continueButton;
+    private final Button restartButton;
+    private final Button menuButton;
+    private final GlyphLayout pauseTitleLayout = new GlyphLayout();
 
     private Texture currentGasTexture;
     private Texture currentBrakeTexture;
@@ -98,6 +105,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     private float wheelRotation = 0f;
 
+    // Объект нашей игровой сессии
+    private final GameSession gameSession = new GameSession();
+
     public GameScreen(MyGdxGame game) {
         this.game = game;
         startTime = TimeUtils.millis();
@@ -119,7 +129,13 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         currentGasTexture = GameResources.gasNormal;
         currentBrakeTexture = GameResources.brakeNormal;
 
+        // Основная кнопка вызова паузы
         pauseButton = new Button(GameResources.pauseButton, 0, 0, 0, 0);
+
+        // Инициализация новых кнопок меню паузы
+        continueButton = new Button(GameResources.continueButton, 0, 0, 0, 0);
+        restartButton = new Button(GameResources.restartButton, 0, 0, 0, 0);
+        menuButton = new Button(GameResources.menuPauseButton, 0, 0, 0, 0);
 
         Texture wheelTexture = GameResources.wheelTexture;
         steeringWheel = new Sprite(wheelTexture);
@@ -221,159 +237,116 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public void render(float delta) {
         handleInput(delta);
-        updateSpeed(delta);
-        updateCarMovement(delta);
-        passedDistance += currentSpeed * delta * 3f;
-
-        float distanceLeft =
-                GameSettings.FINISH_DISTANCE - passedDistance;
-
-        if (distanceLeft <= 500 && !finishVisible) {
-
-            finishVisible = true;
-
-            finishLineY = game.gameViewport.getWorldHeight() + 200;
-
-            obstacleManager.clear();
-        }
-
-        checkCollisions();
-
-        track.update(currentSpeed * 3f, delta);
-        obstacleManager.update(currentSpeed * 3f, delta, passedDistance);
-
-        if (finishVisible) {
-            finishLineY -= currentSpeed * 3f * delta;
-        }
-        if (finishVisible) {
-
-            Rectangle finishRect =
-                    new Rectangle(
-                            roadLeftBound,
-                            finishLineY,
-                            roadRightBound - roadLeftBound,
-                            80
-                    );
-
-            Rectangle carRect =
-                    new Rectangle(
-                            carX,
-                            carY,
-                            carWidth,
-                            carHeight
-                    );
-
-            if (finishRect.overlaps(carRect)) {
-
-                long finishTime =
-                        TimeUtils.timeSinceMillis(startTime);
-
-                LeaderboardManager.addTime(finishTime);
-
-                resetControls();
-
-                game.setScreen(
-                        new FinishScreen(
-                                game,
-                                getFormattedTime()
-                        )
-                );
-
-                return;
-            }
-        }
-
-
-        draw(delta);
 
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         game.gameViewport.unproject(mousePos);
-        pauseButton.update(mousePos.x, mousePos.y);
+
+        // Игровая симуляция работает исключительно в состоянии PLAYING
+        if (GameSession.state == GameState.PLAYING) {
+            updateSpeed(delta);
+            updateCarMovement(delta);
+            passedDistance += currentSpeed * delta * 3f;
+
+            float distanceLeft = GameSettings.FINISH_DISTANCE - passedDistance;
+
+            if (distanceLeft <= 500 && !finishVisible) {
+                finishVisible = true;
+                finishLineY = game.gameViewport.getWorldHeight() + 200;
+                obstacleManager.clear();
+            }
+
+            checkCollisions();
+
+            track.update(currentSpeed * 3f, delta);
+            obstacleManager.update(currentSpeed * 3f, delta, passedDistance);
+
+            if (finishVisible) {
+                finishLineY -= currentSpeed * 3f * delta;
+            }
+            if (finishVisible) {
+                Rectangle finishRect = new Rectangle(roadLeftBound, finishLineY, roadRightBound - roadLeftBound, 80);
+                Rectangle carRect = new Rectangle(carX, carY, carWidth, carHeight);
+
+                if (finishRect.overlaps(carRect)) {
+                    long finishTime = TimeUtils.timeSinceMillis(startTime);
+                    LeaderboardManager.addTime(finishTime);
+                    resetControls();
+                    gameSession.state = GameState.ENDED;
+                    game.setScreen(new FinishScreen(game, getFormattedTime()));
+                    return;
+                }
+            }
+            // Подсветка кнопки вызова паузы работает в активной игре
+            pauseButton.update(mousePos.x, mousePos.y);
+        }
+        // Если игра на паузе — обновляем ховеры кнопок меню паузы
+        else if (GameSession.state == GameState.PAUSED) {
+            continueButton.update(mousePos.x, mousePos.y);
+            restartButton.update(mousePos.x, mousePos.y);
+            menuButton.update(mousePos.x, mousePos.y);
+        }
+
+        draw(delta);
     }
 
     private void updateCarMovement(float delta) {
-
         float steerFactor = wheelRotation / 180f;
         carX -= steerFactor * currentSpeed * 5f * delta;
 
-        carX = MathUtils.clamp(
-                carX,
-                roadLeftBound,
-                roadRightBound - carWidth
-        );
+        carX = MathUtils.clamp(carX, roadLeftBound, roadRightBound - carWidth);
 
         float t = currentSpeed / maxSpeed;
-
-        float targetY =
-                roadBottomBound +
-                        t * (roadTopBound - roadBottomBound);
+        float targetY = roadBottomBound + t * (roadTopBound - roadBottomBound);
 
         carY += (targetY - carY) * delta * 3f;
-
-        carY = MathUtils.clamp(
-                carY,
-                roadBottomBound,
-                roadTopBound
-        );
+        carY = MathUtils.clamp(carY, roadBottomBound, roadTopBound);
 
         carSprite.setPosition(carX, carY);
-
         carSprite.setRotation(wheelRotation * 0.4f);
     }
 
     private void checkCollisions() {
-
-        Rectangle carBounds =
-                new Rectangle(carX, carY, carWidth, carHeight);
+        Rectangle carBounds = new Rectangle(carX, carY, carWidth, carHeight);
 
         for (Obstacle obstacle : obstacleManager.getObstacles()) {
-
             if (obstacle.getBounds().overlaps(carBounds)) {
-
                 if (obstacle.getType() == 4) {
-
                     currentSpeed *= 0.9f;
                     break;
                 }
 
+                if (game.audioManager != null && game.audioManager.crashSound != null) {
+                    game.audioManager.crashSound.play(Options.soundVolume);
+                }
+
                 durability--;
-
                 obstacleManager.removeObstacle(obstacle);
-
                 currentSpeed *= 0.5f;
 
                 if (durability <= 0) {
-
                     resetControls();
-
-                    game.setScreen(
-                            new GameOverScreen(
-                                    game,
-                                    getFormattedTime()
-                            )
-                    );
+                    game.setScreen(new GameOverScreen(game, getFormattedTime()));
                 }
-
                 break;
             }
         }
     }
 
     private String getFormattedTime() {
-
         long elapsed = TimeUtils.timeSinceMillis(startTime);
 
         long mins = elapsed / 60000;
         long secs = (elapsed % 60000) / 1000;
         long millis = elapsed % 1000;
 
-        return String.format("%02d:%02d.%03d",
-                mins,
-                secs,
-                millis);
+        return String.format("%02d:%02d.%03d", mins, secs, millis);
     }
 
     private void handleInput(float delta) {
+        if (GameSession.state != GameState.PLAYING) {
+            return;
+        }
+
         boolean gasTouched = false;
         boolean brakeTouched = false;
         boolean stillHoldingWheel = false;
@@ -409,9 +382,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             isWheelPressed = false;
             wheelPointerId = -1;
         }
+
         if (!isWheelPressed && !isLeftKeyPressed && !isRightKeyPressed) {
             float returnSpeed = 300f * delta;
-
             if (Math.abs(wheelRotation) < returnSpeed) {
                 wheelRotation = 0;
             } else {
@@ -420,6 +393,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             steeringWheel.setRotation(wheelRotation);
             carSprite.setRotation(wheelRotation);
         }
+
         if (isLeftKeyPressed) {
             wheelRotation += 175f * delta;
         }
@@ -493,8 +467,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 currentSpeed = 0;
             }
         }
-
-
     }
 
     public void draw(float delta) {
@@ -508,7 +480,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         track.draw(game.batch);
 
         if (finishVisible) {
-
             game.batch.draw(
                     GameResources.finishLine,
                     roadLeftBound,
@@ -536,9 +507,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float hpSpacing = 50;
 
         for (int i = 0; i < 3; i++) {
-
             Texture texture;
-
             if (i < durability) {
                 texture = GameResources.durabilityFull;
             } else {
@@ -578,14 +547,22 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 worldWidth / 2f - 60,
                 worldHeight - 20
         );
-//        long totalSeconds = elapsed / 1000;
-
-
-//        float starY = worldHeight - 50;
-//        game.batch.draw((totalSeconds >= 60) ? GameResources.star_tusk : GameResources.star, 40, starY, 40, 40);
-//        game.batch.draw((totalSeconds >= 40) ? GameResources.star_tusk : GameResources.star, 90, starY, 40, 40);
-//        game.batch.draw((totalSeconds >= 20) ? GameResources.star_tusk : GameResources.star, 140, starY, 40, 40);
         pauseButton.draw(game.batch);
+
+        if (GameSession.state == GameState.PAUSED) {
+            pauseTitleLayout.setText(font, "GAME PAUSED");
+            font.draw(
+                    game.batch,
+                    pauseTitleLayout,
+                    (worldWidth - pauseTitleLayout.width) / 2f,
+                    worldHeight * 0.85f
+            );
+
+            continueButton.draw(game.batch);
+            restartButton.draw(game.batch);
+            menuButton.draw(game.batch);
+        }
+
         game.batch.end();
     }
 
@@ -603,10 +580,20 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 buttonWidth,
                 buttonSize
         );
+
+        float bw = w * 0.45f;
+        float bh = h * 0.30f;
+        float cx = w / 2f - bw / 2f;
+
+        continueButton.setPosition(cx, h * 0.55f, bw, bh);
+        restartButton.setPosition(cx, h * 0.38f, bw, bh);
+        menuButton.setPosition(cx, h * 0.21f, bw, bh);
     }
 
     public void startNewGame() {
-        startTime = TimeUtils.millis();
+        gameSession.startGame();
+        startTime = gameSession.startTime;
+
         currentSpeed = 0;
         passedDistance = 0;
         finishVisible = false;
@@ -635,7 +622,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         isWheelPressed = false;
         isGasKeyPressed = false;
         isBrakeKeyPressed = false;
-
         isLeftKeyPressed = false;
         isRightKeyPressed = false;
         wheelPointerId = -1;
@@ -667,18 +653,34 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         touchPos.set(screenX, screenY, 0);
         game.gameViewport.unproject(touchPos);
 
-        if (pauseButton.isTapped(touchPos.x, touchPos.y)) {
-            if (game.audioManager != null) {
-                if (game.audioManager.gasMusic.isPlaying()) {
-                    game.audioManager.gasMusic.pause();
+        if (GameSession.state == GameState.PLAYING) {
+            if (pauseButton.isTapped(touchPos.x, touchPos.y)) {
+                if (game.audioManager != null) {
+                    if (game.audioManager.gasMusic.isPlaying()) game.audioManager.gasMusic.pause();
+                    if (game.audioManager.brakeMusic.isPlaying())
+                        game.audioManager.brakeMusic.pause();
                 }
-                if (game.audioManager.brakeMusic.isPlaying()) {
-                    game.audioManager.brakeMusic.pause();
-                }
+                resetControls();
+                gameSession.pauseGame();
+                return true;
             }
-            resetControls();
-            game.setScreen(game.pauseScreen);
-            return true;
+        } else if (GameSession.state == GameState.PAUSED) {
+            if (continueButton.isTapped(touchPos.x, touchPos.y)) {
+                gameSession.resumeGame();
+                this.startTime = gameSession.startTime;
+                return true;
+            }
+
+            if (restartButton.isTapped(touchPos.x, touchPos.y)) {
+                startNewGame();
+                return true;
+            }
+
+            if (menuButton.isTapped(touchPos.x, touchPos.y)) {
+                gameSession.state = GameState.ENDED;
+                game.setScreen(game.menuScreen);
+                return true;
+            }
         }
         return false;
     }
@@ -686,28 +688,40 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-            resetControls();
-            game.setScreen(game.pauseScreen);
-            return true;
-        }
-        if (keycode == Input.Keys.W) {
-            isGasKeyPressed = true;
-            return true;
-        }
-
-        if (keycode == Input.Keys.S) {
-            isBrakeKeyPressed = true;
-            return true;
-        }
-
-        if (keycode == Input.Keys.A) {
-            isLeftKeyPressed = true;
-            return true;
+            if (GameSession.state == GameState.PLAYING) {
+                if (game.audioManager != null) {
+                    if (game.audioManager.gasMusic.isPlaying()) game.audioManager.gasMusic.pause();
+                    if (game.audioManager.brakeMusic.isPlaying())
+                        game.audioManager.brakeMusic.pause();
+                }
+                resetControls();
+                gameSession.pauseGame();
+                return true;
+            } else if (GameSession.state == GameState.PAUSED) {
+                gameSession.resumeGame();
+                this.startTime = gameSession.startTime;
+                return true;
+            }
         }
 
-        if (keycode == Input.Keys.D) {
-            isRightKeyPressed = true;
-            return true;
+        // Кнопки вождения активны только в режиме игры
+        if (GameSession.state == GameState.PLAYING) {
+            if (keycode == Input.Keys.W) {
+                isGasKeyPressed = true;
+                return true;
+            }
+            if (keycode == Input.Keys.S) {
+                isBrakeKeyPressed = true;
+                return true;
+            }
+            if (keycode == Input.Keys.A) {
+                isLeftKeyPressed = true;
+                return true;
+            }
+            if (keycode == Input.Keys.D) {
+                isRightKeyPressed = true;
+                return true;
+            }
         }
         return false;
     }
@@ -718,17 +732,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             isGasKeyPressed = false;
             return true;
         }
-
         if (keycode == Input.Keys.S) {
             isBrakeKeyPressed = false;
             return true;
         }
-
         if (keycode == Input.Keys.A) {
             isLeftKeyPressed = false;
             return true;
         }
-
         if (keycode == Input.Keys.D) {
             isRightKeyPressed = false;
             return true;
