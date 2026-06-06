@@ -52,6 +52,9 @@ public class GameResources {
     public static Texture finishLine;
     public static Texture leaderboardButton;
 
+    public static Texture durabilityFull;
+    public static Texture durabilityBroken;
+
 
     public static void loadTextures() {
 
@@ -110,7 +113,11 @@ public class GameResources {
 
         finishLine = new Texture("objects/finish_line.png");
         leaderboardButton = new Texture("buttons/leaderboard.png");
+
+        durabilityFull = new Texture("durability/durabilityFull.png");
+        durabilityBroken = new Texture("durability/durabilityBroken.png");
     }
+
 
     public static final String GAS_MUSIC_PATH = "sounds/gas.mp3";
     public static final String BRAKE_MUSIC_PATH = "sounds/brake.mp3";
@@ -165,5 +172,9 @@ public class GameResources {
         if (clearRecords != null) clearRecords.dispose();
         if (finishLine != null) finishLine.dispose();
         if (leaderboardButton != null) leaderboardButton.dispose();
+
+
+        if (durabilityFull != null) durabilityFull.dispose();
+        if (durabilityBroken != null) durabilityBroken.dispose();
     }
 }

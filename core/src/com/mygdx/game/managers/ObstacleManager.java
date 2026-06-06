@@ -164,4 +164,8 @@ public class ObstacleManager {
 
         distanceSinceSpawn = 0;
     }
+
+    public void removeObstacle(Obstacle obstacle) {
+        obstacles.removeValue(obstacle, true);
+    }
 }
