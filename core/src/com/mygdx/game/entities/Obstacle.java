@@ -18,8 +18,6 @@ public class Obstacle {
 
     private int type;
 
-    private boolean finish;
-
 
     public Obstacle(
             Texture texture,
@@ -77,9 +75,6 @@ public class Obstacle {
     }
     public int getType() {
         return type;
-    }
-    public boolean isFinish() {
-        return finish;
     }
 
 }

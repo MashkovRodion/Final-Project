@@ -107,9 +107,6 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
         float carButtonSize = Math.min(w * 0.19f, h * 0.24f);
         float spacing = w * 0.04f;
 
-        float leftOffset = -w * 0.05f;
-        float rightOffset = w * 0.05f;
-
         float centerX = w / 2f;
         float startY = h * 0.55f;
 
@@ -122,7 +119,6 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
             int col = i % 2;
 
             float horizontalOffset = 0;
-            String skinName = skins[i].getDisplayName();
 
             float baseX;
             if (col == 0) {

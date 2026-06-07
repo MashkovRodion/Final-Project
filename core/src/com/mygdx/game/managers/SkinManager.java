@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class SkinManager {
     public enum CarSkin {
         DEFAULT("skins/Ferrari SS.PNG", "Ferrari"),
-        SPORTS("skins/MclarenSS.PNG", "Mclaren"),
+        SPORTS("skins/MclarenSS.PNG", "McLaren"),
         CLASSIC("skins/Mercedes SS.png", "Mercedes"),
         TRUCK("skins/RBR SS.PNG", "RedBull");
 
