@@ -15,7 +15,6 @@ import com.mygdx.game.screens.LeaderboardScreen;
 import com.mygdx.game.screens.MenuScreen;
 import com.mygdx.game.screens.OptionScreen;
 import com.mygdx.game.options.Options;
-import com.mygdx.game.screens.PauseScreen;
 import com.mygdx.game.managers.SkinManager;
 import com.mygdx.game.skins.SkinSelectionScreen;
 
@@ -28,8 +27,6 @@ public class MyGdxGame extends Game {
 	public Viewport uiViewport;
 
 	public AudioManager audioManager;
-
-	public PauseScreen pauseScreen;
 	public GameScreen gameScreen;
 	public MenuScreen menuScreen;
 	public OptionScreen optionScreen;
@@ -66,8 +63,6 @@ public class MyGdxGame extends Game {
 		if (audioManager.backgroundMusic != null) {
 			audioManager.backgroundMusic.play();
 		}
-
-		pauseScreen = new PauseScreen(this);
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
 		optionScreen = new OptionScreen(this);

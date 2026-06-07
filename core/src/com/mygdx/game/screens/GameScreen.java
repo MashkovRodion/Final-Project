@@ -88,12 +88,17 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private float roadRightBound;
     private float roadBottomBound;
     private float roadTopBound;
-    private float carMoveSpeed = 500f;
-    private float carVerticalSpeed = 300f;
+
+
 
     private int durability = 3;
+    private final float[] hpBlinkTimers = new float[3];
+
 
     private float passedDistance = 0;
+
+    private boolean isOnSand = false;
+    private boolean isSandSlowApplied = false;
 
     private float finishLineY;
     private boolean finishVisible = false;
@@ -238,6 +243,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public void render(float delta) {
+
+        for (int i = 0; i < 3; i++) {
+            if (hpBlinkTimers[i] > 0) {
+                hpBlinkTimers[i] -= delta;
+            }
+        }
+
+
         handleInput(delta);
 
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -247,7 +260,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         if (GameSession.state == GameState.PLAYING) {
             updateSpeed(delta);
             updateCarMovement(delta);
-            passedDistance += currentSpeed * delta * 3f;
+            float steerAmount = Math.abs(wheelRotation) / 180f;
+
+            float forwardSpeed = currentSpeed * (1f - steerAmount * 0.5f);
+
+            passedDistance += forwardSpeed * delta * 3f;
 
             float distanceLeft = GameSettings.FINISH_DISTANCE - passedDistance;
 
@@ -259,8 +276,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
             checkCollisions();
 
-            track.update(currentSpeed * 3f, delta);
-            obstacleManager.update(currentSpeed * 3f, delta, passedDistance);
+            track.update(forwardSpeed * 3f, delta);
+            obstacleManager.update(forwardSpeed * 3f, delta, passedDistance);
 
             if (finishVisible) {
                 finishLineY -= currentSpeed * 3f * delta;
@@ -308,12 +325,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     }
 
     private void checkCollisions() {
+
+        isOnSand = false;
         Rectangle carBounds = new Rectangle(carX, carY, carWidth, carHeight);
 
         for (Obstacle obstacle : obstacleManager.getObstacles()) {
             if (obstacle.getBounds().overlaps(carBounds)) {
                 if (obstacle.getType() == 4) {
-                    currentSpeed *= 0.9f;
+                    isOnSand = true;
                     break;
                 }
 
@@ -322,6 +341,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 }
 
                 durability--;
+                hpBlinkTimers[durability] = 3f;
                 obstacleManager.removeObstacle(obstacle);
                 currentSpeed *= 0.5f;
 
@@ -331,6 +351,15 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 }
                 break;
             }
+        }
+
+        if (isOnSand && !isSandSlowApplied) {
+            currentSpeed *= 0.5f;
+            isSandSlowApplied = true;
+        }
+
+        if (!isOnSand) {
+            isSandSlowApplied = false;
         }
     }
 
@@ -386,7 +415,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         }
 
         if (!isWheelPressed && !isLeftKeyPressed && !isRightKeyPressed) {
-            float returnSpeed = 300f * delta;
+            float returnSpeed = 250f * delta;
             if (Math.abs(wheelRotation) < returnSpeed) {
                 wheelRotation = 0;
             } else {
@@ -454,6 +483,10 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     accelerationMultiplier = 0.0f;
             }
 
+            if (isOnSand) {
+                accelerationMultiplier *= 0.2f;
+            }
+
             currentSpeed += acceleration * accelerationMultiplier * delta;
             if (currentSpeed > maxSpeed) {
                 currentSpeed = maxSpeed;
@@ -510,20 +543,36 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float hpSpacing = 50;
 
         for (int i = 0; i < 3; i++) {
-            Texture texture;
-            if (i < durability) {
-                texture = GameResources.durabilityFull;
-            } else {
-                texture = GameResources.durabilityBroken;
-            }
 
-            game.batch.draw(
-                    texture,
-                    hpX + i * hpSpacing,
-                    hpY,
-                    hpSize,
-                    hpSize
-            );
+            if (i < durability) {
+
+                game.batch.draw(
+                        GameResources.durabilityFull,
+                        hpX + i * hpSpacing,
+                        hpY,
+                        hpSize,
+                        hpSize
+                );
+            }
+            else {
+
+                if (hpBlinkTimers[i] > 0) {
+
+                    boolean visible =
+                            ((int)(hpBlinkTimers[i] * 6f)) % 2 == 0;
+
+                    if (visible) {
+
+                        game.batch.draw(
+                                GameResources.durabilityFull,
+                                hpX + i * hpSpacing,
+                                hpY,
+                                hpSize,
+                                hpSize
+                        );
+                    }
+                }
+            }
         }
 
         String speedText = String.valueOf((int) currentSpeed);
