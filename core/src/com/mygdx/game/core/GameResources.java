@@ -1,6 +1,7 @@
 package com.mygdx.game.core;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap;
 
 public class GameResources {
 
@@ -54,6 +55,8 @@ public class GameResources {
 
     public static Texture durabilityFull;
     public static Texture durabilityBroken;
+
+    public static Texture darkOverlay;
 
 
     public static void loadTextures() {
@@ -116,6 +119,18 @@ public class GameResources {
 
         durabilityFull = new Texture("durability/durabilityFull.png");
         durabilityBroken = new Texture("durability/durabilityBroken.png");
+
+        //------------------------------//
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(1, 1, 1, 1);
+        pixmap.fill();
+
+        darkOverlay = new Texture(pixmap);
+
+        pixmap.dispose();
+        //--------------------------------//
+
+
     }
 
 

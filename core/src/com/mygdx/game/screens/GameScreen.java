@@ -105,6 +105,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     private float wheelRotation = 0f;
 
+    private long pausedElapsedTime = 0;
+
     // Объект нашей игровой сессии
     private final GameSession gameSession = new GameSession();
 
@@ -472,6 +474,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     public void draw(float delta) {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
 
         game.gameViewport.apply();
         game.batch.setProjectionMatrix(game.gameCamera.combined);
@@ -533,7 +536,13 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 speedometerY + (speedometerHeight + speedLayout.height) / 2f
         );
 
-        long elapsed = TimeUtils.timeSinceMillis(startTime);
+        long elapsed;
+
+        if (GameSession.state == GameState.PAUSED) {
+            elapsed = pausedElapsedTime;
+        } else {
+            elapsed = TimeUtils.timeSinceMillis(startTime);
+        }
 
         long mins = elapsed / 60000;
         long secs = (elapsed % 60000) / 1000;
@@ -550,6 +559,21 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         pauseButton.draw(game.batch);
 
         if (GameSession.state == GameState.PAUSED) {
+
+            game.batch.setColor(0f, 0f, 0f, 0.8f);
+
+            game.batch.draw(
+                    GameResources.darkOverlay,
+                    0,
+                    0,
+                    worldWidth,
+                    worldHeight
+            );
+
+            game.batch.setColor(1f, 1f, 1f, 1f);
+
+            font.getData().setScale(2f);
+
             pauseTitleLayout.setText(font, "GAME PAUSED");
             font.draw(
                     game.batch,
@@ -557,6 +581,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     (worldWidth - pauseTitleLayout.width) / 2f,
                     worldHeight * 0.85f
             );
+
+            font.getData().setScale(1.5f);
 
             continueButton.draw(game.batch);
             restartButton.draw(game.batch);
@@ -582,12 +608,12 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         );
 
         float bw = w * 0.45f;
-        float bh = h * 0.30f;
+        float bh = h * 0.4f;
         float cx = w / 2f - bw / 2f;
 
-        continueButton.setPosition(cx, h * 0.55f, bw, bh);
-        restartButton.setPosition(cx, h * 0.38f, bw, bh);
-        menuButton.setPosition(cx, h * 0.21f, bw, bh);
+        continueButton.setPosition(cx, h * 0.41f, bw, bh);
+        restartButton.setPosition(cx, h * 0.21f, bw, bh);
+        menuButton.setPosition(cx, h * 0.01f, bw, bh);
     }
 
     public void startNewGame() {
@@ -661,6 +687,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                         game.audioManager.brakeMusic.pause();
                 }
                 resetControls();
+                pausedElapsedTime = TimeUtils.timeSinceMillis(startTime);
                 gameSession.pauseGame();
                 return true;
             }
@@ -695,6 +722,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                         game.audioManager.brakeMusic.pause();
                 }
                 resetControls();
+                pausedElapsedTime = TimeUtils.timeSinceMillis(startTime);
                 gameSession.pauseGame();
                 return true;
             } else if (GameSession.state == GameState.PAUSED) {
