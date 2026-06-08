@@ -49,7 +49,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     private Button pauseButton;
 
-    // Компоненты UI меню паузы, перенесенные из PauseScreen
     private final Button continueButton;
     private final Button restartButton;
     private final Button menuButton;
@@ -107,7 +106,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     private long pausedElapsedTime = 0;
 
-    // Объект нашей игровой сессии
     private final GameSession gameSession = new GameSession();
 
     public GameScreen(MyGdxGame game) {
@@ -131,10 +129,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         currentGasTexture = GameResources.gasNormal;
         currentBrakeTexture = GameResources.brakeNormal;
 
-        // Основная кнопка вызова паузы
         pauseButton = new Button(GameResources.pauseButton, 0, 0, 0, 0);
 
-        // Инициализация новых кнопок меню паузы
         continueButton = new Button(GameResources.continueButton, 0, 0, 0, 0);
         restartButton = new Button(GameResources.restartButton, 0, 0, 0, 0);
         menuButton = new Button(GameResources.menuPauseButton, 0, 0, 0, 0);
@@ -243,7 +239,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         game.gameViewport.unproject(mousePos);
 
-        // Игровая симуляция работает исключительно в состоянии PLAYING
         if (GameSession.state == GameState.PLAYING) {
             updateSpeed(delta);
             updateCarMovement(delta);
@@ -278,10 +273,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     return;
                 }
             }
-            // Подсветка кнопки вызова паузы работает в активной игре
             pauseButton.update(mousePos.x, mousePos.y);
         }
-        // Если игра на паузе — обновляем ховеры кнопок меню паузы
         else if (GameSession.state == GameState.PAUSED) {
             continueButton.update(mousePos.x, mousePos.y);
             restartButton.update(mousePos.x, mousePos.y);
@@ -738,7 +731,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             }
         }
 
-        // Кнопки вождения активны только в режиме игры
         if (GameSession.state == GameState.PLAYING) {
             if (keycode == Input.Keys.W) {
                 isGasKeyPressed = true;

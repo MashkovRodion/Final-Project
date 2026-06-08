@@ -120,7 +120,6 @@ public class GameResources {
         durabilityFull = new Texture("durability/durabilityFull.png");
         durabilityBroken = new Texture("durability/durabilityBroken.png");
 
-        //------------------------------//
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(1, 1, 1, 1);
         pixmap.fill();
@@ -128,7 +127,6 @@ public class GameResources {
         darkOverlay = new Texture(pixmap);
 
         pixmap.dispose();
-        //--------------------------------//
 
 
     }
