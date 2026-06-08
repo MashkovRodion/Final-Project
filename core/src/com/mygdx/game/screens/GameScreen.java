@@ -372,6 +372,12 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                     stillHoldingWheel = true;
                     float currentTouchAngle = MathUtils.atan2(touchPos.y - wheelCenterY, touchPos.x - wheelCenterX) * MathUtils.radiansToDegrees;
                     float angleDelta = currentTouchAngle - startTouchAngle;
+                    if (angleDelta > 180f) {
+                        angleDelta -= 360f;
+                    }
+                    if (angleDelta < -180f) {
+                        angleDelta += 360f;
+                    }
                     wheelRotation = startWheelRotation + angleDelta;
                     wheelRotation = MathUtils.clamp(wheelRotation, -180f, 180f);
                     steeringWheel.setRotation(wheelRotation);
