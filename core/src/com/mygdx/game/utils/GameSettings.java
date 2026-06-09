@@ -10,7 +10,7 @@ public class GameSettings {
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 480;
 
-    public static final float FINISH_DISTANCE = 3500f;
+    public static final float FINISH_DISTANCE = 10000f;
 
     public static final int WHEEL_SIZE = 230;
     public static final float PADDING_X = 0f;
