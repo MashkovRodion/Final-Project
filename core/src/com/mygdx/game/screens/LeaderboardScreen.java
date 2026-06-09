@@ -155,7 +155,7 @@ public class LeaderboardScreen implements Screen, InputProcessor {
 
         if (backButton.isTapped(pos.x, pos.y)) {
 
-            game.setScreen(game.optionScreen);
+            game.setScreen(game.menuScreen);
 
             return true;
         }

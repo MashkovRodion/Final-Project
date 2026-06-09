@@ -19,6 +19,7 @@ public class MenuScreen implements Screen, InputProcessor {
     private Button buttonOptions;
     private Button buttonQuit;
     private Button buttonSkins;
+    private Button buttonLeaderboard;
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
@@ -33,6 +34,7 @@ public class MenuScreen implements Screen, InputProcessor {
         buttonOptions = new Button(GameResources.optionsButton,0,0,0,0);
         buttonQuit = new Button(GameResources.quitButton,0,0,0,0);
         buttonSkins = new Button(GameResources.skinsButton,0,0,0,0);
+        buttonLeaderboard = new Button(GameResources.leaderboardButton,0,0,0,0);
 
         if (game.audioManager != null && game.audioManager.backgroundMusic != null && !game.audioManager.backgroundMusic.isPlaying()) {
             game.audioManager.backgroundMusic.play();
@@ -64,6 +66,9 @@ public class MenuScreen implements Screen, InputProcessor {
         float skinsY = h * 0.27f + (bh - skinsHeight) / 2f;
 
         buttonSkins.setPosition(skinsX, skinsY, skinsWidth, skinsHeight);
+        float leaderboardX = cx - margin - skinsWidth;
+
+        buttonLeaderboard.setPosition(leaderboardX - 60, skinsY - 75, skinsWidth * 1.7f, skinsHeight * 2f);
     }
 
     @Override
@@ -81,6 +86,7 @@ public class MenuScreen implements Screen, InputProcessor {
         buttonOptions.update(m.x, m.y);
         buttonQuit.update(m.x, m.y);
         buttonSkins.update(m.x, m.y);
+        buttonLeaderboard.update(m.x, m.y);
 
         game.batch.setProjectionMatrix(game.uiCamera.combined);
 
@@ -95,6 +101,7 @@ public class MenuScreen implements Screen, InputProcessor {
         buttonOptions.draw(game.batch);
         buttonQuit.draw(game.batch);
         buttonSkins.draw(game.batch);
+        buttonLeaderboard.draw(game.batch);
 
         game.batch.end();
     }
@@ -123,6 +130,10 @@ public class MenuScreen implements Screen, InputProcessor {
 
         if (buttonSkins.isTapped(t.x,t.y)) {
             game.setScreen(game.skinSelectionScreen);
+            return true;
+        }
+        if (buttonLeaderboard.isTapped(t.x,t.y)) {
+            game.setScreen(game.leaderboardScreen);
             return true;
         }
 

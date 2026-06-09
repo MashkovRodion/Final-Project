@@ -30,7 +30,6 @@ public class OptionScreen implements Screen, InputProcessor {
 
     private Button buttonBack;
     private Button clearRecordsButton;
-    private Button leaderboardButton;
 
 
 
@@ -61,7 +60,6 @@ public class OptionScreen implements Screen, InputProcessor {
 
         buttonBack = new Button(GameResources.backButton,0,0,0,0);
         clearRecordsButton = new Button(GameResources.clearRecords, 0, 0, 0, 0);
-        leaderboardButton = new Button(GameResources.leaderboardButton, 0,0,0,0);
 
     }
 
@@ -90,7 +88,6 @@ public class OptionScreen implements Screen, InputProcessor {
 
         fullscreenButton.update(mouseX, mouseY);
         clearRecordsButton.update(mouseX, mouseY);
-        leaderboardButton.update(mouseX, mouseY);
         buttonMusicPlus.update(mouseX, mouseY);
         buttonMusicMinus.update(mouseX, mouseY);
 
@@ -160,7 +157,6 @@ public class OptionScreen implements Screen, InputProcessor {
         buttonSoundPlus.draw(game.batch);
 
         clearRecordsButton.draw(game.batch);
-        leaderboardButton.draw(game.batch);
 
         buttonBack.draw(game.batch);
 
@@ -189,12 +185,6 @@ public class OptionScreen implements Screen, InputProcessor {
                 h * 0.4f,
                 clearRecordsWidth,
                 clearRecordsHeight
-        );
-        leaderboardButton.setPosition(
-                centerX + clearRecordsWidth * 0.4f,
-                h * 0.45f,
-                clearRecordsWidth - 300,
-                clearRecordsHeight - 100
         );
 
         panelWidth = w * 0.42f;
@@ -262,14 +252,6 @@ public class OptionScreen implements Screen, InputProcessor {
         if (clearRecordsButton.isTapped(x, y)) {
 
             LeaderboardManager.clear();
-
-            return true;
-        }
-        if (leaderboardButton.isTapped(x, y)) {
-
-            game.setScreen(
-                    game.leaderboardScreen
-            );
 
             return true;
         }
