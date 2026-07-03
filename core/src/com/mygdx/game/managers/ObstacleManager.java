@@ -1,0 +1,171 @@
+package com.mygdx.game.managers;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.utils.GameSettings;
+import com.mygdx.game.entities.Obstacle;
+
+import com.mygdx.game.core.GameResources;
+
+public class ObstacleManager {
+
+    private Array<Obstacle> obstacles;
+
+    private float worldWidth;
+
+    private float lastSpawnX = 0;
+
+    private final float roadLeft;
+    private final float roadRight;
+
+    private float distanceSinceSpawn;
+
+    public ObstacleManager(float worldWidth) {
+
+        this.worldWidth = worldWidth;
+
+        roadLeft = worldWidth * 0.198f;
+        roadRight = worldWidth * 0.8f;
+
+        obstacles = new Array<>();
+
+        distanceSinceSpawn = 0;
+    }
+
+    public void update(
+            float speed,
+            float delta,
+            float passedDistance
+    ) {
+
+        distanceSinceSpawn += speed * delta;
+
+        for (int i = obstacles.size - 1; i >= 0; i--) {
+
+            Obstacle obstacle = obstacles.get(i);
+
+            obstacle.update(speed, delta);
+
+            if (obstacle.isOutOfScreen()) {
+                obstacles.removeIndex(i);
+            }
+        }
+
+        float distanceToFinish =
+                GameSettings.FINISH_DISTANCE - passedDistance;
+
+        if (distanceToFinish <= 1500f) {
+            return;
+        }
+
+        if (distanceSinceSpawn >= 300f) {
+
+            spawnRandomObstacle();
+
+            distanceSinceSpawn = 0;
+        }
+    }
+
+    public void draw(SpriteBatch batch) {
+
+        for (Obstacle obstacle : obstacles) {
+            obstacle.draw(batch);
+        }
+    }
+
+    private void spawnRandomObstacle() {
+
+        int type = MathUtils.random(4);
+
+        Texture texture = getTextureForType(type);
+
+        float scale;
+
+        switch (type) {
+            case 0:
+                scale = 0.22f;
+                break;
+
+            case 1:
+                scale = 0.22f;
+                break;
+
+            case 2:
+                scale = 0.14f;
+                break;
+
+            case 3:
+                scale = 1.3f;
+                break;
+
+            default:
+                scale = 1.5f;
+        }
+
+        float width = texture.getWidth() * scale;
+        float height = texture.getHeight() * scale;
+
+        float x;
+        int attempts = 0;
+
+        do {
+            x = MathUtils.random(
+                    roadLeft,
+                    roadRight - width
+            );
+
+            attempts++;
+
+        } while (
+                Math.abs(x - lastSpawnX) < 120
+                        && attempts < 20
+        );
+
+        lastSpawnX = x;
+
+        float y = 900;
+
+        boolean circular = (type == 2 || type == 3);
+
+        obstacles.add(
+                new Obstacle(
+                        getTextureForType(type),
+                        x,
+                        y,
+                        width,
+                        height,
+                        type,
+                        circular
+                )
+        );
+    }
+
+    private Texture getTextureForType(int type) {
+
+        switch (type) {
+
+            case 0: return GameResources.barrier1;
+            case 1: return GameResources.barrier2;
+            case 2: return GameResources.barrier3;
+            case 3: return GameResources.barrier4;
+            default: return GameResources.barrier5;
+        }
+    }
+
+    public Array<Obstacle> getObstacles() {
+        return obstacles;
+    }
+
+    public void clear() {
+
+        obstacles.clear();
+
+        distanceSinceSpawn = 0;
+    }
+
+    public void removeObstacle(Obstacle obstacle) {
+        obstacles.removeValue(obstacle, true);
+    }
+}
