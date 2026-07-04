@@ -42,6 +42,11 @@ public class OptionScreen implements Screen, InputProcessor {
     private float panelWidth;
     private float panelHeight;
 
+    private float aspect;
+    private float width;
+    private float height;
+
+
     private final GlyphLayout volumeLayout = new GlyphLayout();
     private final GlyphLayout soundLayout = new GlyphLayout();
     private Task autoRepeatTask;
@@ -116,9 +121,9 @@ public class OptionScreen implements Screen, InputProcessor {
         game.batch.draw(
                 GameResources.musicPanel,
                 panelX,
-                panelY,
+                panelY * 0.79f,
                 panelWidth,
-                panelHeight
+                panelHeight * 1.2f
         );
         String volumeText = "" + (int)(Options.musicVolume * 100);
         volumeLayout.setText(font, volumeText);
@@ -135,9 +140,9 @@ public class OptionScreen implements Screen, InputProcessor {
         game.batch.draw(
                 GameResources.sfxPanel,
                 panelX,
-                panelY - 180f,
+                panelY * 0.79f - 180f,
                 panelWidth,
-                panelHeight
+                panelHeight * 1.2f
         );
         String soundText = "" + (int)(Options.soundVolume * 100);
         soundLayout.setText(font, soundText);
@@ -167,24 +172,28 @@ public class OptionScreen implements Screen, InputProcessor {
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
         float centerX = w / 2f;
-        float fullscreenWidth = w * 0.45f;
-        float fullscreenHeight = h * 0.4f;
+
+        aspect = (float) GameResources.fullscreenOn.getHeight() / GameResources.fullscreenOn.getWidth();
+        width = w * 0.4f;
+        height = width * aspect;
 
         fullscreenButton.setPosition(
-                centerX - fullscreenWidth / 2f,
-                h * 0.52f,
-                fullscreenWidth,
-                fullscreenHeight
+                centerX - width / 2f,
+                h * 0.65f,
+                width,
+                height
         );
 
-        float clearRecordsWidth = w * 0.33f;
-        float clearRecordsHeight = h * 0.31f;
+        aspect = (float) GameResources.clearRecords.getHeight() / GameResources.clearRecords.getWidth();
+        width = w * 0.25f;
+        height = width * aspect;
+
 
         clearRecordsButton.setPosition(
-                centerX - clearRecordsWidth / 2f,
-                h * 0.4f,
-                clearRecordsWidth,
-                clearRecordsHeight
+                centerX - width / 2f,
+                h * 0.53f,
+                width,
+                height
         );
 
         panelWidth = w * 0.42f;
@@ -197,40 +206,62 @@ public class OptionScreen implements Screen, InputProcessor {
 
         float buttonSize = h * 0.1f;
         float spacing = w * 0.025f;
+
+        aspect = (float) GameResources.minusButton.getHeight() / GameResources.minusButton.getWidth();
+        width = buttonSize;
+        height = width * aspect;
+
         buttonMusicMinus.setPosition(
                 panelX - buttonSize - spacing,
                 buttonY,
                 buttonSize,
                 buttonSize
         );
+
+        aspect = (float) GameResources.plusButton.getHeight() / GameResources.plusButton.getWidth();
+        width = buttonSize;
+        height = width * aspect;
+
         buttonMusicPlus.setPosition(
                 panelX + panelWidth + spacing,
                 buttonY,
-                buttonSize,
-                buttonSize
+                width,
+                height
         );
+
+        aspect = (float) GameResources.minusButton.getHeight() / GameResources.minusButton.getWidth();
+        width = buttonSize;
+        height = width * aspect;
+
         buttonSoundMinus.setPosition(
                 panelX - buttonSize - spacing,
                 buttonY - 200f,
-                buttonSize,
-                buttonSize
+                width,
+                height
         );
+
+        aspect = (float) GameResources.plusButton.getHeight() / GameResources.plusButton.getWidth();
+        width = buttonSize;
+        height = width * aspect;
+
         buttonSoundPlus.setPosition(
                 panelX + panelWidth + spacing,
                 buttonY - 200f,
-                buttonSize,
-                buttonSize
+                width,
+                height
         );
-        float backWidth = w * 0.4f;
-        float backHeight = h * 0.4f;
 
-        float targetY = (h * 0.001f) - 130f;
+        aspect = (float) GameResources.backButton.getHeight() / GameResources.backButton.getWidth();
+        width = w * 0.2f;
+        height = width * aspect;
+
+        float targetY = h * 0.05f;
 
         buttonBack.setPosition(
-                centerX - backWidth / 2f,
+                centerX - width / 2f,
                 targetY,
-                backWidth,
-                backHeight
+                width,
+                height
         );
     }
 

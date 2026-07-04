@@ -21,6 +21,13 @@ public class MenuScreen implements Screen, InputProcessor {
     private Button buttonSkins;
     private Button buttonLeaderboard;
 
+    private float aspect;
+    private float height;
+    private float width;
+    float cx;
+    float by;
+
+
     public MenuScreen(MyGdxGame game) {
         this.game = game;
     }
@@ -49,26 +56,47 @@ public class MenuScreen implements Screen, InputProcessor {
 
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
-        float bw = w * 0.45f;
-        float bh = h * 0.4f;
-        float cx = w / 2f - bw / 2f;
+        float spacing = w * 0.05f;
+        float widthOptions;
 
-        buttonStart.setPosition(cx, h * 0.48f, bw, bh);
-        buttonOptions.setPosition(cx, h * 0.25f, bw, bh);
-        buttonQuit.setPosition(cx, h * 0.01f, bw, bh);
+        aspect = (float) GameResources.startButton.getHeight() / GameResources.startButton.getWidth();
+        width = w * 0.45f;
+        height = width * aspect;
+        cx = w / 2f - width / 2f;
+        by = h * 0.6f;
 
-        float skinsHeight = h * 0.12f;
-        float skinsWidth = h * 0.2f;
-        float margin = h * 0.015f;
+        buttonStart.setPosition(cx, by, width, height);
 
-        float optionsRight = cx + bw;
-        float skinsX = optionsRight + margin;
-        float skinsY = h * 0.27f + (bh - skinsHeight) / 2f;
+        aspect = (float) GameResources.optionsButton.getHeight() / GameResources.optionsButton.getWidth();
+        width = w * 0.45f;
+        height = width * aspect;
+        cx = w / 2f - width / 2f;
+        by = h * 0.35f;
+        widthOptions = width;
 
-        buttonSkins.setPosition(skinsX, skinsY, skinsWidth, skinsHeight);
-        float leaderboardX = cx - margin - skinsWidth;
+        buttonOptions.setPosition(cx, by, width, height);
 
-        buttonLeaderboard.setPosition(leaderboardX - 60, skinsY - 75, skinsWidth * 1.7f, skinsHeight * 2f);
+        aspect = (float) GameResources.leaderboardButton.getHeight() / GameResources.leaderboardButton.getWidth();
+        width = w * 0.09f;
+        height = width * aspect;
+
+        buttonLeaderboard.setPosition(cx - spacing - width, by * 1.02f, width, height);
+
+        aspect = (float) GameResources.skinsButton.getHeight() / GameResources.skinsButton.getWidth();
+        width = w * 0.09f;
+        height = width * aspect;
+
+        buttonSkins.setPosition(cx + widthOptions + spacing, by * 1.02f, width, height);
+
+        aspect = (float) GameResources.quitButton.getHeight() / GameResources.quitButton.getWidth();
+        width = w * 0.45f;
+        height = width * aspect;
+        cx = w / 2f - width / 2f;
+        by = h * 0.1f;
+
+        buttonQuit.setPosition(cx, by, width, height);
+
+
     }
 
     @Override
