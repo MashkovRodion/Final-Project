@@ -93,9 +93,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private float roadRightBound;
     private float roadBottomBound;
     private float roadTopBound;
-    private float carMoveSpeed = 500f;
-    private float carVerticalSpeed = 300f;
-
     private boolean onType4 = false;
     private boolean type4SpeedReduced = false;
 
