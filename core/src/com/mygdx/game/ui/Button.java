@@ -33,10 +33,10 @@ public class Button {
         drawBounds.set(x, y, width, height);
 
         hitbox.set(
-                x + width * 0.08f,
-                y + height * 0.15f,
-                width * 0.84f,
-                height * 0.7f
+                x,
+                y,
+                width,
+                height
         );
     }
 

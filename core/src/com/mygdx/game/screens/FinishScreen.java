@@ -70,22 +70,27 @@ public class FinishScreen extends ScreenAdapter implements InputProcessor {
         float w = game.gameViewport.getWorldWidth();
         float h = game.gameViewport.getWorldHeight();
 
-        float buttonWidth = 250f;
-        float buttonHeight = 150f;
-        float centerX = w / 2f - buttonWidth / 2f;
+
+        float aspect = (float) GameResources.restartButton.getHeight() / GameResources.restartButton.getWidth();
+        float width = w * 0.35f;
+        float height = width * aspect;
+        float cx = w / 2f - width / 2f;
 
         restartButton.setPosition(
-                centerX,
-                h * 0.35f,
-                buttonWidth,
-                buttonHeight
+                cx,
+                h * 0.4f,
+                width,
+                height
         );
 
+        aspect = (float) GameResources.restartButton.getHeight() / GameResources.restartButton.getWidth();
+        height = width * aspect;
+
         menuButton.setPosition(
-                centerX,
-                h * 0.15f,
-                buttonWidth,
-                buttonHeight
+                cx,
+                h * 0.2f,
+                width,
+                height
         );
 
         restartButton.update(mousePos.x, mousePos.y);
