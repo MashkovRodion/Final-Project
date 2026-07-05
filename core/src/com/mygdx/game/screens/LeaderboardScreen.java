@@ -26,11 +26,7 @@ public class LeaderboardScreen implements Screen, InputProcessor {
 
         font = new BitmapFont();
 
-        backButton =
-                new Button(
-                        GameResources.backButton,
-                        0,0,0,0
-                );
+        backButton = new Button(GameResources.backButton, 0,0,0,0);
     }
 
     @Override
@@ -41,11 +37,16 @@ public class LeaderboardScreen implements Screen, InputProcessor {
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
 
+        float aspect = (float) GameResources.backButton.getHeight() / GameResources.backButton.getWidth();
+        float width = w * 0.35f;
+        float height = width * aspect;
+        float cx = w / 2f - width / 2f;
+
         backButton.setPosition(
-                w / 2f - 250,
-                10,
-                500,
-                325
+                cx,
+                h * 0.01f,
+                width,
+                height
         );
     }
 

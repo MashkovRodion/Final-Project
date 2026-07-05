@@ -70,6 +70,10 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private float startTouchAngle;
     private float dynamicRamSpeedX;
 
+    private float aspect;
+    private float width;
+    private float height;
+
     private float pedalSize;
     private float speedometerY;
     float speedometerWidth;
@@ -653,24 +657,37 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float w = game.gameViewport.getWorldWidth();
         float h = game.gameViewport.getWorldHeight();
 
-        float buttonSize = h * 0.1f;
-        float margin = h * 0.02f;
-        float buttonWidth = h * 0.2f;
+        float spacing = w * 0.005f;
+        float cx;
+
+        aspect = (float) GameResources.pauseButton.getHeight() / GameResources.pauseButton.getWidth();
+        width = w * 0.06f;
+        height = width * aspect;
 
         pauseButton.setPosition(
-                w - buttonSize - margin - 10,
-                h - buttonSize - margin + 10,
-                buttonWidth,
-                buttonSize
+                w - width - spacing,
+                h - width - spacing,
+                width,
+                height
         );
 
-        float bw = w * 0.45f;
-        float bh = h * 0.4f;
-        float cx = w / 2f - bw / 2f;
+        aspect = (float) GameResources.continueButton.getHeight() / GameResources.continueButton.getWidth();
+        width = w * 0.35f;
+        height = width * aspect;
+        cx = w / 2f - width / 2f;
 
-        continueButton.setPosition(cx, h * 0.41f, bw, bh);
-        restartButton.setPosition(cx, h * 0.21f, bw, bh);
-        menuButton.setPosition(cx, h * 0.01f, bw, bh);
+        continueButton.setPosition(cx, h * 0.55f, width, height);
+
+
+        aspect = (float) GameResources.restartButton.getHeight() / GameResources.restartButton.getWidth();
+        height = width * aspect;
+
+        restartButton.setPosition(cx, h * 0.35f, width, height);
+
+        aspect = (float) GameResources.menuPauseButton.getHeight() / GameResources.menuPauseButton.getWidth();
+        height = width * aspect;
+
+        menuButton.setPosition(cx, h * 0.13f, width, height);
     }
 
     public void startNewGame() {

@@ -95,13 +95,16 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
 
         font.getData().setScale(h * 0.004f);
 
-        float backWidth = w * 0.35f;
-        float backHeight = h * 0.35f;
+        float aspect = (float) GameResources.backButton.getHeight() / GameResources.backButton.getWidth();
+        float width = w * 0.35f;
+        float height = width * aspect;
+        float cx = w / 2f - width / 2f;
+
         backButton.setPosition(
-                (w - backWidth) / 2f,
-                h * -0.1f,
-                backWidth,
-                backHeight
+                cx,
+                h * 0.01f,
+                width,
+                height
         );
 
         float carButtonSize = Math.min(w * 0.19f, h * 0.24f);
