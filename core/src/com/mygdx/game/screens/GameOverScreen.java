@@ -24,6 +24,10 @@ public class GameOverScreen extends ScreenAdapter {
 
     private Vector3 touchPos;
 
+    private float aspect;
+    private float width;
+    private float height;
+
     public GameOverScreen(MyGdxGame game, String survivalTime) {
 
         this.game = game;
@@ -64,28 +68,35 @@ public class GameOverScreen extends ScreenAdapter {
 
         game.gameViewport.unproject(touchPos);
 
-        float worldWidth = game.gameViewport.getWorldWidth();
-        float worldHeight = game.gameViewport.getWorldHeight();
+        float w = game.gameViewport.getWorldWidth();
+        float h = game.gameViewport.getWorldHeight();
 
-        float buttonWidth = 280f;
         float buttonHeight = 150f;
-        float centerX = worldWidth / 2f - buttonWidth / 2f;
 
-        float restartButtonY = worldHeight * 0.30f;
-        float menuButtonY = worldHeight * 0.12f;
+        float restartButtonY = h * 0.30f;
+
+        aspect = (float) GameResources.restartButton.getHeight() / GameResources.restartButton.getWidth();
+        width = w * 0.35f;
+        height = width * aspect;
+        float cx = w / 2f - width / 2f;
+
 
         restartButton.setPosition(
-                centerX,
-                restartButtonY,
-                buttonWidth,
-                buttonHeight
+                cx,
+                h * 0.4f,
+                width,
+                height
         );
 
+        aspect = (float) GameResources.menuPauseButton.getHeight() / GameResources.menuPauseButton.getWidth();
+        height = width * aspect;
+
+
         menuButton.setPosition(
-                centerX,
-                menuButtonY,
-                buttonWidth,
-                buttonHeight
+                cx,
+                h * 0.12f,
+                width,
+                height
         );
 
         restartButton.update(touchPos.x, touchPos.y);
@@ -125,8 +136,8 @@ public class GameOverScreen extends ScreenAdapter {
         game.batch.begin();
 
         GlyphLayout loseText = new GlyphLayout(font, "You lost");
-        float textCenterX = worldWidth / 2f - loseText.width / 2f;
-        float textY = restartButtonY + buttonHeight + 40;
+        float textCenterX = w / 2f - loseText.width / 2f;
+        float textY = h * 0.4f + buttonHeight;
 
         font.draw(
                 game.batch,

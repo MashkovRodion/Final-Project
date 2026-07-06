@@ -78,7 +78,7 @@ public class LeaderboardScreen implements Screen, InputProcessor {
         game.batch.begin();
 
         game.batch.draw(
-                GameResources.menu_bg,
+                GameResources.leaderboard_bg,
                 0,
                 0,
                 game.uiViewport.getWorldWidth(),
