@@ -83,7 +83,7 @@ public class SkinSelectionScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-        background = GameResources.menu_bg;
+        background = GameResources.skins_bg;
         backButton = new Button(GameResources.backButton, 0, 0, 0, 0);
         updateLayout();
         Gdx.input.setInputProcessor(this);

@@ -107,7 +107,7 @@ public class OptionScreen implements Screen, InputProcessor {
         float w = game.uiViewport.getWorldWidth();
         float h = game.uiViewport.getWorldHeight();
         game.batch.draw(
-                GameResources.menu_bg,
+                GameResources.options_bg,
                 0,
                 0,
                 w,

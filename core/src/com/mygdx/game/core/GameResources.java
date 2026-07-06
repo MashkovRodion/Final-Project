@@ -18,6 +18,9 @@ public class GameResources {
 
 
     public static Texture menu_bg;
+    public static Texture leaderboard_bg;
+    public static Texture skins_bg;
+    public static Texture options_bg;
 
     public static Texture startButton;
     public static Texture optionsButton;
@@ -74,6 +77,9 @@ public class GameResources {
 
 
         menu_bg = new Texture("backgrounds/menu_bg.png");
+        options_bg = new Texture("backgrounds/options_bg.png");
+        skins_bg = new Texture("backgrounds/skins_bg.png");
+        leaderboard_bg = new Texture("backgrounds/leaderboard_bg.png");
 
         startButton = new Texture("buttons/NEW_GAME.png");
 
@@ -149,6 +155,9 @@ public class GameResources {
         if (star_tusk != null) star_tusk.dispose();
 
         if (menu_bg != null) menu_bg.dispose();
+        if (leaderboard_bg != null) leaderboard_bg.dispose();
+        if (skins_bg != null) skins_bg.dispose();
+        if (options_bg != null) options_bg.dispose();
 
         if (startButton != null) startButton.dispose();
         if (optionsButton != null) optionsButton.dispose();
