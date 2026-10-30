@@ -199,5 +199,6 @@ public class GameResources {
 
         if (durabilityFull != null) durabilityFull.dispose();
         if (durabilityBroken != null) durabilityBroken.dispose();
+        if (darkOverlay != null) {darkOverlay.dispose();}
     }
 }
