@@ -1,7 +1,8 @@
-sourceCompatibility = 1.7
+sourceCompatibility = 21
+targetCompatibility = 21
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
