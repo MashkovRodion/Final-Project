@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import com.mygdx.game.ui.Button;
 import com.mygdx.game.managers.LeaderboardManager;
+import com.mygdx.game.managers.SettingsManager;
 import com.mygdx.game.options.Options;
 
 import com.mygdx.game.core.GameResources;
@@ -392,6 +393,10 @@ public class OptionScreen implements Screen, InputProcessor {
             autoRepeatTask.cancel();
             autoRepeatTask = null;
         }
+
+        SettingsManager.setMusicVolume(Options.musicVolume);
+        SettingsManager.setSoundVolume(Options.soundVolume);
+
         activePointerId = -1;
     }
 

@@ -1,3 +1,4 @@
+
 package com.mygdx.game.managers;
 
 import com.badlogic.gdx.Gdx;
@@ -8,21 +9,21 @@ public class SettingsManager {
     private static final Preferences prefs =
             Gdx.app.getPreferences("pixel-racing-settings");
 
-    public static float getVolume() {
-        return prefs.getFloat("volume", 1.0f);
+    public static float getMusicVolume() {
+        return prefs.getFloat("musicVolume", 1.0f);
     }
 
-    public static void setVolume(float volume) {
-        prefs.putFloat("volume", volume);
+    public static void setMusicVolume(float volume) {
+        prefs.putFloat("musicVolume", volume);
         prefs.flush();
     }
 
-    public static boolean isMusicEnabled() {
-        return prefs.getBoolean("musicEnabled", true);
+    public static float getSoundVolume() {
+        return prefs.getFloat("soundVolume", 1.0f);
     }
 
-    public static void setMusicEnabled(boolean enabled) {
-        prefs.putBoolean("musicEnabled", enabled);
+    public static void setSoundVolume(float volume) {
+        prefs.putFloat("soundVolume", volume);
         prefs.flush();
     }
 }

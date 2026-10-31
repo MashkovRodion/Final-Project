@@ -17,6 +17,7 @@ import com.mygdx.game.screens.OptionScreen;
 import com.mygdx.game.options.Options;
 import com.mygdx.game.managers.SkinManager;
 import com.mygdx.game.skins.SkinSelectionScreen;
+import com.mygdx.game.managers.SettingsManager;
 
 public class MyGdxGame extends Game {
 
@@ -58,6 +59,9 @@ public class MyGdxGame extends Game {
 
 		GameResources.loadTextures();
 		SkinManager.loadTextures();
+
+		Options.musicVolume = SettingsManager.getMusicVolume();
+		Options.soundVolume = SettingsManager.getSoundVolume();
 
 		audioManager = new AudioManager();
 		if (audioManager.backgroundMusic != null) {

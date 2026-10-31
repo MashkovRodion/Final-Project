@@ -1,10 +1,9 @@
 package com.mygdx.game.utils;
 
 import com.badlogic.gdx.utils.TimeUtils;
-
 public class GameSession {
 
-    public static GameState state;
+    public GameState state;
 
     public long startTime;
     public long pauseStartTime;
@@ -23,10 +22,8 @@ public class GameSession {
         pauseStartTime = TimeUtils.millis();
     }
 
-
     public void resumeGame() {
         state = GameState.PLAYING;
         startTime += (TimeUtils.millis() - pauseStartTime);
     }
 }
-

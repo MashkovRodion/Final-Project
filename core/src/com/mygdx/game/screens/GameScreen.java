@@ -245,7 +245,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Vector3 mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         game.gameViewport.unproject(mousePos);
 
-        if (GameSession.state == GameState.PLAYING) {
+        if (gameSession.state == GameState.PLAYING) {
             updateSpeed(delta);
             updateCarMovement(delta);
             passedDistance += currentSpeed * delta * 3f;
@@ -281,7 +281,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             }
             pauseButton.update(mousePos.x, mousePos.y);
         }
-        else if (GameSession.state == GameState.PAUSED) {
+        else if (gameSession.state == GameState.PAUSED) {
             continueButton.update(mousePos.x, mousePos.y);
             restartButton.update(mousePos.x, mousePos.y);
             menuButton.update(mousePos.x, mousePos.y);
@@ -392,7 +392,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     }
 
     private void handleInput(float delta) {
-        if (GameSession.state != GameState.PLAYING) {
+        if (gameSession.state != GameState.PLAYING) {
             return;
         }
 
@@ -596,7 +596,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         long elapsed;
 
-        if (GameSession.state == GameState.PAUSED) {
+        if (gameSession.state == GameState.PAUSED) {
             elapsed = pausedElapsedTime;
         } else {
             elapsed = TimeUtils.timeSinceMillis(startTime);
@@ -616,7 +616,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         );
         pauseButton.draw(game.batch);
 
-        if (GameSession.state == GameState.PAUSED) {
+        if (gameSession.state == GameState.PAUSED) {
 
             game.batch.setColor(0f, 0f, 0f, 0.8f);
 
@@ -750,7 +750,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         touchPos.set(screenX, screenY, 0);
         game.gameViewport.unproject(touchPos);
 
-        if (GameSession.state == GameState.PLAYING) {
+        if (gameSession.state == GameState.PLAYING) {
             if (pauseButton.isTapped(touchPos.x, touchPos.y)) {
                 if (game.audioManager != null) {
                     if (game.audioManager.gasMusic.isPlaying()) game.audioManager.gasMusic.pause();
@@ -762,7 +762,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 gameSession.pauseGame();
                 return true;
             }
-        } else if (GameSession.state == GameState.PAUSED) {
+        } else if (gameSession.state == GameState.PAUSED) {
             if (continueButton.isTapped(touchPos.x, touchPos.y)) {
                 gameSession.resumeGame();
                 this.startTime = gameSession.startTime;
@@ -786,7 +786,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-            if (GameSession.state == GameState.PLAYING) {
+            if (gameSession.state == GameState.PLAYING) {
                 if (game.audioManager != null) {
                     if (game.audioManager.gasMusic.isPlaying()) game.audioManager.gasMusic.pause();
                     if (game.audioManager.brakeMusic.isPlaying())
@@ -796,14 +796,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 pausedElapsedTime = TimeUtils.timeSinceMillis(startTime);
                 gameSession.pauseGame();
                 return true;
-            } else if (GameSession.state == GameState.PAUSED) {
+            } else if (gameSession.state == GameState.PAUSED) {
                 gameSession.resumeGame();
                 this.startTime = gameSession.startTime;
                 return true;
             }
         }
 
-        if (GameSession.state == GameState.PLAYING) {
+        if (gameSession.state == GameState.PLAYING) {
             if (keycode == Input.Keys.W) {
                 isGasKeyPressed = true;
                 return true;
